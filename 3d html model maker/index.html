@@ -8,33 +8,32 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { overflow: hidden; background-color: #1a1a1a; color: #fff; display: flex; user-select: none; }
 
-        #toggle-btn {
-            position: absolute; top: 15px; left: 15px; z-index: 50;
-            background: #0277bd; border: none; color: white; padding: 10px 14px;
-            border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background 0.2s;
+        /* --- Collapsible Sidebar & Bookmark Tab --- */
+        #sidebar-wrapper {
+            position: fixed; top: 0; left: 0; height: 100vh;
+            display: flex; align-items: center; z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #toggle-btn:hover { background: #4fc3f7; }
-
-        #top-bar {
-            position: absolute; top: 15px; left: 70px; z-index: 50; display: flex; gap: 8px;
+        #sidebar-wrapper.collapsed {
+            transform: translateX(-360px);
         }
-        .top-btn {
-            background: #333337; color: #ccc; border: 1px solid #454545; padding: 10px 14px;
-            cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 13px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s;
-        }
-        .top-btn:hover:not(:disabled) { background: #454545; color: #fff; }
-        .top-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         #sidebar {
-            width: 360px; height: 100vh; background: #252526; border-right: 2px solid #3e3e42;
-            display: flex; flex-direction: column; z-index: 10; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            transition: margin-left 0.3s ease; flex-shrink: 0; margin-left: 0;
-            padding-top: 60px;
+            width: 360px; height: 100%; background: #252526; border-right: 2px solid #3e3e42;
+            display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            padding-top: 20px;
         }
-        #sidebar.hidden { margin-left: -360px; }
 
+        #bookmark-handle {
+            width: 34px; height: 90px; background: #0277bd; border: 2px solid #3e3e42;
+            border-left: none; border-radius: 0 12px 12px 0; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 5px 2px 10px rgba(0,0,0,0.4); font-size: 11px; color: white;
+            font-weight: bold; transition: background 0.2s, width 0.1s; gap: 4px;
+        }
+        #bookmark-handle:hover { background: #4fc3f7; width: 38px; }
+
+        /* --- Top Bar & UI Panels --- */
         .tab-nav {
             display: flex; flex-wrap: wrap; gap: 2px;
             padding: 10px 10px 0 10px; border-bottom: 2px solid #3e3e42;
@@ -166,6 +165,24 @@
         .selection-badge.visible { display: block; }
 
         .slider-group { background: #1e1e1e; padding: 10px; border-radius: 6px; border: 1px solid #3e3e42; margin-bottom: 10px; }
+
+        /* --- Floating Undo/Redo Bottom Right --- */
+        #history-hub {
+            position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 50;
+        }
+        .history-btn {
+            width: 50px; height: 50px; border-radius: 50%; background: rgba(33, 33, 33, 0.9);
+            border: 1px solid #4fc3f7; color: #4fc3f7; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: all 0.2s ease;
+        }
+        .history-btn:hover:not(:disabled) {
+            background: #0277bd; color: #fff; border-color: #fff;
+            transform: translateY(-2px); box-shadow: 0 6px 14px rgba(79, 195, 247, 0.4);
+        }
+        .history-btn:disabled {
+            opacity: 0.4; border-color: #454545; color: #777; cursor: not-allowed;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -173,178 +190,184 @@
 </head>
 <body>
 
-    <button id="toggle-btn">☰</button>
-    <div id="top-bar">
-        <button id="undo-btn" class="top-btn" disabled>↶ Undo</button>
-        <button id="redo-btn" class="top-btn" disabled>↷ Redo</button>
+    <div id="sidebar-wrapper">
+        <div id="sidebar">
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="shapes">Shapes</button>
+                <button class="tab-btn" data-tab="tools">Tools</button>
+                <button class="tab-btn" data-tab="appearance">Appearance</button>
+                <button class="tab-btn" data-tab="env">Env</button>
+                <button class="tab-btn" data-tab="presets">Presets</button>
+                <button class="tab-btn" data-tab="io">I/O</button>
+            </div>
+
+            <div id="tab-shapes" class="tab-panel active">
+                <h3>Library</h3>
+                <div class="shape-list">
+                    <div class="drag-shape" draggable="true" data-shape="box">Cube</div>
+                    <div class="drag-shape" draggable="true" data-shape="sphere">Sphere</div>
+                    <div class="drag-shape" draggable="true" data-shape="cylinder">Cylinder</div>
+                    <div class="drag-shape" draggable="true" data-shape="cone">Cone</div>
+                    <div class="drag-shape" draggable="true" data-shape="pyramid">Pyramid</div>
+                    <div class="drag-shape" draggable="true" data-shape="prism">Prism</div>
+                    <div class="drag-shape" draggable="true" data-shape="torus">Torus</div>
+                    <div class="drag-shape" draggable="true" data-shape="ring">Ring</div>
+                    <div class="drag-shape" draggable="true" data-shape="pretzel">Pretzel</div>
+                </div>
+                <div class="drag-hint">Tap to spawn OR Drag to grid</div>
+                
+                <div class="action-grid" style="margin-top:15px;">
+                    <button id="delete-all-btn" style="background:#c0392b;">Delete All</button>
+                </div>
+            </div>
+
+            <div id="tab-tools" class="tab-panel">
+                <h3>Equip Tool</h3>
+                <div class="grid">
+                    <button id="tool-select" class="active" data-tool="select"><span class="highlight">[1]</span> Select</button>
+                    <button id="tool-translate" data-tool="translate"><span class="highlight">[2]</span> Move</button>
+                    <button id="tool-scale" data-tool="scale"><span class="highlight">[3]</span> Scale</button>
+                    <button id="tool-rotate" data-tool="rotate"><span class="highlight">[4]</span> Rotate</button>
+                </div>
+                
+                <div style="margin-top: 12px; background: #1e1e1e; padding: 10px; border-radius: 6px; border: 1px solid #3e3e42;">
+                    <label class="checkbox-group" style="margin-bottom: 8px;">
+                        <input type="checkbox" id="snap-toggle" checked> Enable Snapping
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="control-group" style="margin-bottom:0; flex:1;">
+                            <label>Move (Studs)</label>
+                            <input type="number" id="snap-move-val" value="1" step="0.1" min="0.1">
+                        </div>
+                        <div class="control-group" style="margin-bottom:0; flex:1;">
+                            <label>Angle (Deg)</label>
+                            <input type="number" id="snap-rotate-val" value="15" step="1" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <button id="clone-btn" style="background:#d68910;">Clone (C)</button>
+                    <button id="delete-btn" style="background:#c0392b;">Delete (Del)</button>
+                </div>
+            </div>
+
+            <div id="tab-appearance" class="tab-panel">
+                <h3>Material Properties</h3>
+                <div class="color-picker-container">
+                    <canvas id="color-canvas" class="color-canvas-el"></canvas>
+                    <div id="hue-slider" class="hue-slider-el"></div>
+                    <div class="color-hex-row">
+                        <div class="color-preview" id="color-preview"></div>
+                        <input type="text" id="color-hex" value="#0277bd" maxlength="7">
+                    </div>
+                    <div class="color-palette" id="color-palette"></div>
+                </div>
+                
+                <div class="slider-group">
+                    <div class="control-group">
+                        <label>Opacity</label>
+                        <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="1">
+                    </div>
+                    <div class="control-group">
+                        <label>Roughness</label>
+                        <input type="range" id="roughness-slider" min="0" max="1" step="0.05" value="0.4">
+                    </div>
+                    <div class="control-group">
+                        <label>Metalness</label>
+                        <input type="range" id="metalness-slider" min="0" max="1" step="0.05" value="0.1">
+                    </div>
+                    <label class="checkbox-group" style="margin-top: 10px;">
+                        <input type="checkbox" id="wireframe-toggle"> Wireframe Mode
+                    </label>
+                </div>
+            </div>
+
+            <div id="tab-env" class="tab-panel">
+                <h3>Environment</h3>
+                <div class="color-picker-container">
+                    <label style="margin-bottom: 5px; display: block;">Sky/Background Color</label>
+                    <canvas id="bg-color-canvas" class="color-canvas-el" style="height: 80px;"></canvas>
+                    <div id="bg-hue-slider" class="hue-slider-el"></div>
+                    <div class="color-hex-row">
+                        <div class="color-preview" id="bg-color-preview" style="background:#1a1a1a;"></div>
+                        <input type="text" id="bg-color-hex" value="#1a1a1a" maxlength="7">
+                    </div>
+                </div>
+                
+                <div class="slider-group">
+                    <div class="control-group">
+                        <label>Ambient Light Intensity</label>
+                        <input type="range" id="ambient-slider" min="0" max="2" step="0.1" value="0.6">
+                    </div>
+                    <label class="checkbox-group" style="margin-top: 10px;">
+                        <input type="checkbox" id="grid-toggle" checked> Show Grid Map
+                    </label>
+                </div>
+            </div>
+
+            <div id="tab-presets" class="tab-panel">
+                <h3>Load Preset Scene</h3>
+                <div class="preset-grid">
+                    <button class="preset-btn" data-preset="garage">🚗 Garage</button>
+                    <button class="preset-btn" data-preset="house">🏠 House</button>
+                    <button class="preset-btn" data-preset="warehouse">🏭 Warehouse</button>
+                    <button class="preset-btn" data-preset="skyscraper">🏢 Skyscraper</button>
+                    <button class="preset-btn" data-preset="bridge">🌉 Bridge</button>
+                    <button class="preset-btn" data-preset="castle">🏰 Castle</button>
+                    <button class="preset-btn" data-preset="tree">🌳 Tree</button>
+                    <button class="preset-btn" data-preset="car">🚙 Car</button>
+                    <button class="preset-btn" data-preset="street">🛣️ Street</button>
+                    <button class="preset-btn" data-preset="fountain">⛲ Fountain</button>
+                    <button class="preset-btn" data-preset="fence">🚧 Fence</button>
+                    <button class="preset-btn" data-preset="stairs">🪜 Stairs</button>
+                </div>
+                <div class="drag-hint" style="margin-top:10px;">Loads a pre-built scene. Clears current model.</div>
+            </div>
+
+            <div id="tab-io" class="tab-panel">
+                <h3>Import JSON</h3>
+                <textarea id="import-box" placeholder="Paste your model JSON here..."></textarea>
+                <button id="import-btn" style="margin-top:8px; background:#0277bd;">Load Model</button>
+                <div id="error-display" class="error-box"></div>
+
+                <h3 style="margin-top:20px;">Export JSON</h3>
+                <button id="export-btn" style="margin-bottom:8px; background:#2e7d32;">Generate Code</button>
+                <textarea id="code-box" readonly placeholder="Your model JSON data will appear here..."></textarea>
+                <button id="copy-btn" style="margin-top:8px;">Copy Code</button>
+            </div>
+        </div>
+
+        <!-- Hanging Sidebar Toggle Bookmark -->
+        <div id="bookmark-handle">
+            <span>T</span><span>A</span><span>B</span><span style="font-size: 8px;">◀</span>
+        </div>
     </div>
+
     <div id="selection-badge" class="selection-badge">0 selected</div>
-
-    <div id="sidebar">
-        <div class="tab-nav">
-            <button class="tab-btn active" data-tab="shapes">Shapes</button>
-            <button class="tab-btn" data-tab="tools">Tools</button>
-            <button class="tab-btn" data-tab="appearance">Appearance</button>
-            <button class="tab-btn" data-tab="env">Env</button>
-            <button class="tab-btn" data-tab="presets">Presets</button>
-            <button class="tab-btn" data-tab="io">I/O</button>
-        </div>
-
-        <div id="tab-shapes" class="tab-panel active">
-            <h3>Library</h3>
-            <div class="shape-list">
-                <div class="drag-shape" draggable="true" data-shape="box">Cube</div>
-                <div class="drag-shape" draggable="true" data-shape="sphere">Sphere</div>
-                <div class="drag-shape" draggable="true" data-shape="cylinder">Cylinder</div>
-                <div class="drag-shape" draggable="true" data-shape="cone">Cone</div>
-                <div class="drag-shape" draggable="true" data-shape="pyramid">Pyramid</div>
-                <div class="drag-shape" draggable="true" data-shape="prism">Prism</div>
-                <div class="drag-shape" draggable="true" data-shape="torus">Torus</div>
-                <div class="drag-shape" draggable="true" data-shape="ring">Ring</div>
-                <div class="drag-shape" draggable="true" data-shape="tube">Tube</div>
-            </div>
-            <div class="drag-hint">Tap to spawn OR Drag to grid</div>
-            
-            <div class="action-grid" style="margin-top:15px;">
-                <button id="delete-all-btn" style="background:#c0392b;">Delete All</button>
-            </div>
-        </div>
-
-        <div id="tab-tools" class="tab-panel">
-            <h3>Equip Tool</h3>
-            <div class="grid">
-                <button id="tool-select" class="active" data-tool="select"><span class="highlight">[1]</span> Select</button>
-                <button id="tool-translate" data-tool="translate"><span class="highlight">[2]</span> Move</button>
-                <button id="tool-scale" data-tool="scale"><span class="highlight">[3]</span> Scale</button>
-                <button id="tool-rotate" data-tool="rotate"><span class="highlight">[4]</span> Rotate</button>
-            </div>
-            
-            <div style="margin-top: 12px; background: #1e1e1e; padding: 10px; border-radius: 6px; border: 1px solid #3e3e42;">
-                <label class="checkbox-group" style="margin-bottom: 8px;">
-                    <input type="checkbox" id="snap-toggle" checked> Enable Snapping
-                </label>
-                <div style="display: flex; gap: 10px;">
-                    <div class="control-group" style="margin-bottom:0; flex:1;">
-                        <label>Move (Studs)</label>
-                        <input type="number" id="snap-move-val" value="1" step="0.1" min="0.1">
-                    </div>
-                    <div class="control-group" style="margin-bottom:0; flex:1;">
-                        <label>Angle (Deg)</label>
-                        <input type="number" id="snap-rotate-val" value="15" step="1" min="1">
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-grid">
-                <button id="clone-btn" style="background:#d68910;">Clone (C)</button>
-                <button id="delete-btn" style="background:#c0392b;">Delete (Del)</button>
-            </div>
-        </div>
-
-        <div id="tab-appearance" class="tab-panel">
-            <h3>Material Properties</h3>
-            <div class="color-picker-container">
-                <canvas id="color-canvas" class="color-canvas-el"></canvas>
-                <div id="hue-slider" class="hue-slider-el"></div>
-                <div class="color-hex-row">
-                    <div class="color-preview" id="color-preview"></div>
-                    <input type="text" id="color-hex" value="#0277bd" maxlength="7">
-                </div>
-                <div class="color-palette" id="color-palette"></div>
-            </div>
-            
-            <div class="slider-group">
-                <div class="control-group">
-                    <label>Opacity</label>
-                    <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="1">
-                </div>
-                <div class="control-group">
-                    <label>Roughness</label>
-                    <input type="range" id="roughness-slider" min="0" max="1" step="0.05" value="0.4">
-                </div>
-                <div class="control-group">
-                    <label>Metalness</label>
-                    <input type="range" id="metalness-slider" min="0" max="1" step="0.05" value="0.1">
-                </div>
-                <label class="checkbox-group" style="margin-top: 10px;">
-                    <input type="checkbox" id="wireframe-toggle"> Wireframe Mode
-                </label>
-            </div>
-        </div>
-
-        <div id="tab-env" class="tab-panel">
-            <h3>Environment</h3>
-            <div class="color-picker-container">
-                <label style="margin-bottom: 5px; display: block;">Sky/Background Color</label>
-                <canvas id="bg-color-canvas" class="color-canvas-el" style="height: 80px;"></canvas>
-                <div id="bg-hue-slider" class="hue-slider-el"></div>
-                <div class="color-hex-row">
-                    <div class="color-preview" id="bg-color-preview" style="background:#1a1a1a;"></div>
-                    <input type="text" id="bg-color-hex" value="#1a1a1a" maxlength="7">
-                </div>
-            </div>
-            
-            <div class="slider-group">
-                <div class="control-group">
-                    <label>Ambient Light Intensity</label>
-                    <input type="range" id="ambient-slider" min="0" max="2" step="0.1" value="0.6">
-                </div>
-                <label class="checkbox-group" style="margin-top: 10px;">
-                    <input type="checkbox" id="grid-toggle" checked> Show Grid Map
-                </label>
-            </div>
-        </div>
-
-        <div id="tab-presets" class="tab-panel">
-            <h3>Load Preset Scene</h3>
-            <div class="preset-grid">
-                <button class="preset-btn" data-preset="garage">🚗 Garage</button>
-                <button class="preset-btn" data-preset="house">🏠 House</button>
-                <button class="preset-btn" data-preset="warehouse">🏭 Warehouse</button>
-                <button class="preset-btn" data-preset="skyscraper">🏢 Skyscraper</button>
-                <button class="preset-btn" data-preset="bridge">🌉 Bridge</button>
-                <button class="preset-btn" data-preset="castle">🏰 Castle</button>
-                <button class="preset-btn" data-preset="tree">🌳 Tree</button>
-                <button class="preset-btn" data-preset="car">🚙 Car</button>
-                <button class="preset-btn" data-preset="street">🛣️ Street</button>
-                <button class="preset-btn" data-preset="fountain">⛲ Fountain</button>
-                <button class="preset-btn" data-preset="fence">🚧 Fence</button>
-                <button class="preset-btn" data-preset="stairs">🪜 Stairs</button>
-            </div>
-            <div class="drag-hint" style="margin-top:10px;">Loads a pre-built scene. Clears current model.</div>
-        </div>
-
-        <div id="tab-io" class="tab-panel">
-            <h3>Import JSON</h3>
-            <textarea id="import-box" placeholder="Paste your model JSON here..."></textarea>
-            <button id="import-btn" style="margin-top:8px; background:#0277bd;">Load Model</button>
-            <div id="error-display" class="error-box"></div>
-
-            <h3 style="margin-top:20px;">Export JSON</h3>
-            <button id="export-btn" style="margin-bottom:8px; background:#2e7d32;">Generate Code</button>
-            <textarea id="code-box" readonly placeholder="Your model JSON data will appear here..."></textarea>
-            <button id="copy-btn" style="margin-top:8px;">Copy Code</button>
-        </div>
-    </div>
 
     <div id="canvas-container">
         <div id="selection-box"></div>
         
         <div id="info-overlay">
-            <strong><span class="highlight">WASD / Arrows</span></strong>: Move Camera<br>
+            <strong><span class="highlight">WASD / Arrows</span></strong>: Move Camera (Flat)<br>
+            <strong><span class="highlight">Space / Shift</span></strong> or <strong><span class="highlight">E / Q</span></strong>: Lift / Lower Camera (or Selected Objects)<br>
             <strong><span class="highlight">Right Click Drag</span></strong>: Orbit Camera<br>
             <strong><span class="highlight">Left Click Drag</span></strong>: Box Select<br>
             <strong><span class="highlight">1, 2, 3, 4</span></strong>: Toggle Tools<br>
             <strong><span class="highlight">Ctrl+Click</span></strong>: Multi Select<br>
             <strong><span class="highlight">Ctrl+A</span></strong>: Select All<br>
-            <strong><span class="highlight">Ctrl+Z / Ctrl+Y</span></strong>: Undo / Redo<br>
-            <strong><span class="highlight">C</span></strong>: Clone object<br>
-            <strong><span class="highlight">Delete</span></strong>: Remove selected
+            <strong><span class="highlight">C</span></strong>: Clone object | <strong><span class="highlight">Delete</span></strong>: Remove selected
+        </div>
+
+        <!-- Floating Bottom-Right History Panel -->
+        <div id="history-hub">
+            <button class="history-btn" id="undo-btn" disabled title="Undo (Ctrl+Z)">↶</button>
+            <button class="history-btn" id="redo-btn" disabled title="Redo (Ctrl+Y)">↷</button>
         </div>
     </div>
 
     <script>
-        // ==================== GLOBALS ====================
         let scene, camera, renderer, orbitControls, transformControls;
         let objects = [];
         let selectedObjects = [];
@@ -356,6 +379,7 @@
         let deleteAllState = 0;
         let deleteAllTimeout = null;
         let dragStartData = null;
+        let keyMoveActive = false;
         
         let visualGizmo = null;
         let selectionOutline = null;
@@ -363,31 +387,28 @@
         
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
-        const keys = { w: false, a: false, s: false, d: false };
+        const keys = { 
+            w: false, a: false, s: false, d: false, 
+            up: false, down: false, left: false, right: false,
+            space: false, shift: false, e: false, q: false 
+        };
         
         const container = document.getElementById('canvas-container');
-        const sidebar = document.getElementById('sidebar');
+        const sidebarWrapper = document.getElementById('sidebar-wrapper');
+        const bookmarkHandle = document.getElementById('bookmark-handle');
         const selectionBox = document.getElementById('selection-box');
         const selectionBadge = document.getElementById('selection-badge');
 
-        // Color picker states
         const pickers = {
             obj: { hue: 200, sat: 100, val: 50, idPrefix: '', updateFn: updateSelectedColors },
             bg:  { hue: 0, sat: 0, val: 10, idPrefix: 'bg-', updateFn: updateSceneBackground }
         };
 
-        // History State
         let historyStack = [];
         let historyIndex = -1;
         let isRestoring = false;
 
-        // ==================== INIT ====================
         function init() {
-            if (typeof THREE === 'undefined') {
-                alert('Three.js failed to load. Check your internet connection.');
-                return;
-            }
-
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x1a1a1a);
             
@@ -421,8 +442,8 @@
             orbitControls.enableDamping = true;
             orbitControls.dampingFactor = 0.05;
             orbitControls.maxPolarAngle = Math.PI / 2 - 0.05; 
+            orbitControls.enableKeys = false; // Prevent OrbitControls keyboard panning from fighting WASD/Arrows
             
-            // Re-map controls: Right click to orbit, disable left click orbit for box selection
             orbitControls.mouseButtons = {
                 LEFT: null,
                 MIDDLE: THREE.MOUSE.PAN,
@@ -437,7 +458,6 @@
             transformControls.addEventListener('dragging-changed', function (event) {
                 orbitControls.enabled = !event.value;
                 if (event.value && primarySelection) {
-                    // Save Initial State for multi-select move/rotate/scale group delta logic
                     dragStartData = {
                         primaryPos: primarySelection.position.clone(),
                         primaryQuat: primarySelection.quaternion.clone(),
@@ -451,7 +471,7 @@
                     };
                 } else if (!event.value) {
                     dragStartData = null;
-                    saveState(); // Record change for Undo
+                    saveState();
                 }
             });
             transformControls.addEventListener('change', handleTransformChange);
@@ -466,19 +486,16 @@
             setupEventListeners();
             updateSnapSettings();
             
-            saveState(); // Initial empty state
+            saveState(); 
             animate();
         }
 
-        // ==================== UNDO / REDO ====================
         function saveState() {
             if (isRestoring) return;
-            // Snip future history if we made a new action after undos
             if (historyIndex < historyStack.length - 1) {
                 historyStack = historyStack.slice(0, historyIndex + 1);
             }
             historyStack.push(getSceneStateJSON());
-            // Cap history
             if (historyStack.length > 50) historyStack.shift();
             else historyIndex++;
             updateUndoRedoUI();
@@ -525,7 +542,6 @@
             updateUndoRedoUI();
         }
 
-        // ==================== ROBLUX-STYLE VISUAL GIZMO ====================
         function createVisualGizmo() {
             visualGizmo = new THREE.Group();
             const gizmoSize = 1.8;
@@ -536,7 +552,6 @@
             const matCenter = new THREE.MeshBasicMaterial({ color: 0xffaa00, depthTest: false, transparent: true, opacity: 0.95 });
             const axisMats = { x: matX, y: matY, z: matZ };
             
-            // Translate
             const translateGroup = new THREE.Group();
             ['x', 'y', 'z'].forEach(axis => {
                 const dir = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
@@ -562,7 +577,6 @@
             visualGizmo.add(translateGroup);
             visualGizmo.userData.translate = translateGroup;
             
-            // Rotate
             const rotateGroup = new THREE.Group();
             ['x', 'y', 'z'].forEach(axis => {
                 const mat = axisMats[axis].clone();
@@ -589,7 +603,6 @@
             visualGizmo.add(rotateGroup);
             visualGizmo.userData.rotate = rotateGroup;
             
-            // Scale
             const scaleGroup = new THREE.Group();
             ['x', 'y', 'z'].forEach(axis => {
                 const dir = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
@@ -634,7 +647,6 @@
             visualGizmo.userData.scale.visible = currentTool === 'scale';
         }
 
-        // ==================== SELECTION OUTLINE ====================
         function createSelectionOutline() {
             selectionOutline = new THREE.Group();
             
@@ -681,7 +693,6 @@
             selectionOutline.visible = true;
         }
 
-        // ==================== MULTI-SELECT TRANSFORMS ====================
         function handleTransformChange() {
             if (dragStartData && selectedObjects.length > 1 && primarySelection) {
                 const pPos = primarySelection.position;
@@ -710,7 +721,6 @@
             }
         }
 
-        // ==================== COLOR PICKER (REUSABLE) ====================
         function setupColorPicker(canvasId, sliderId, hexId, previewId, stateObj) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
@@ -831,9 +841,11 @@
                 });
             });
 
-            document.getElementById('toggle-btn').addEventListener('click', () => {
-                sidebar.classList.toggle('hidden');
-                setTimeout(onWindowResize, 300);
+            bookmarkHandle.addEventListener('click', () => {
+                sidebarWrapper.classList.toggle('collapsed');
+                const isCollapsed = sidebarWrapper.classList.contains('collapsed');
+                bookmarkHandle.querySelector('span:last-child').textContent = isCollapsed ? '▶' : '◀';
+                setTimeout(onWindowResize, 350);
             });
 
             document.querySelectorAll('.drag-shape').forEach(shape => {
@@ -907,12 +919,21 @@
                 const key = e.key.toLowerCase();
                 if (key === 'control') isCtrlDown = true;
                 
-                if (key === 'w' || key === 'arrowup') keys.w = true;
-                if (key === 'a' || key === 'arrowleft') keys.a = true;
-                if (key === 's' || key === 'arrowdown') keys.s = true;
-                if (key === 'd' || key === 'arrowright') keys.d = true;
-
                 if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+                    if (key === 'w') keys.w = true;
+                    if (key === 'a') keys.a = true;
+                    if (key === 's') keys.s = true;
+                    if (key === 'd') keys.d = true;
+                    if (e.key === 'ArrowUp' || key === 'arrowup') { e.preventDefault(); keys.up = true; }
+                    if (e.key === 'ArrowDown' || key === 'arrowdown') { e.preventDefault(); keys.down = true; }
+                    if (e.key === 'ArrowLeft' || key === 'arrowleft') { e.preventDefault(); keys.left = true; }
+                    if (e.key === 'ArrowRight' || key === 'arrowright') { e.preventDefault(); keys.right = true; }
+
+                    if (e.key === ' ' || e.code === 'Space') { keys.space = true; if (selectedObjects.length === 0) e.preventDefault(); }
+                    if (e.key === 'Shift') { keys.shift = true; if (selectedObjects.length === 0) e.preventDefault(); }
+                    if (key === 'e') { keys.e = true; }
+                    if (key === 'q') { keys.q = true; }
+
                     if (e.ctrlKey) {
                         if (key === 'a') { e.preventDefault(); selectAll(); }
                         if (key === 'z') { e.preventDefault(); undo(); }
@@ -925,16 +946,59 @@
                         if (key === 'c') duplicateSelected();
                         if (key === 'delete' || key === 'backspace') deleteSelected();
                     }
+
+                    // Height modification of selected items
+                    if (selectedObjects.length > 0) {
+                        let dy = 0;
+                        const snapToggle = document.getElementById('snap-toggle').checked;
+                        const snapMoveVal = snapToggle ? parseFloat(document.getElementById('snap-move-val').value) || 0.5 : 0.2;
+                        
+                        if (e.key === ' ' || e.code === 'Space' || key === 'e') {
+                            e.preventDefault();
+                            dy = snapMoveVal;
+                        } else if (e.key === 'Shift' || key === 'q') {
+                            e.preventDefault();
+                            dy = -snapMoveVal;
+                        }
+
+                        if (dy !== 0) {
+                            if (!keyMoveActive) {
+                                saveState();
+                                keyMoveActive = true;
+                            }
+                            selectedObjects.forEach(obj => {
+                                obj.position.y += dy;
+                            });
+                            updateSelectionOutline();
+                            updateVisualGizmo();
+                            if (transformControls.object) {
+                                transformControls.update();
+                            }
+                        }
+                    }
                 }
             });
 
             document.addEventListener('keyup', (e) => {
                 const key = e.key.toLowerCase();
                 if (key === 'control') isCtrlDown = false;
-                if (key === 'w' || key === 'arrowup') keys.w = false;
-                if (key === 'a' || key === 'arrowleft') keys.a = false;
-                if (key === 's' || key === 'arrowdown') keys.s = false;
-                if (key === 'd' || key === 'arrowright') keys.d = false;
+                if (key === 'w') keys.w = false;
+                if (key === 'a') keys.a = false;
+                if (key === 's') keys.s = false;
+                if (key === 'd') keys.d = false;
+                if (e.key === 'ArrowUp' || key === 'arrowup') keys.up = false;
+                if (e.key === 'ArrowDown' || key === 'arrowdown') keys.down = false;
+                if (e.key === 'ArrowLeft' || key === 'arrowleft') keys.left = false;
+                if (e.key === 'ArrowRight' || key === 'arrowright') keys.right = false;
+
+                if (e.key === ' ' || e.code === 'Space') keys.space = false;
+                if (e.key === 'Shift') keys.shift = false;
+                if (key === 'e') keys.e = false;
+                if (key === 'q') keys.q = false;
+
+                if (e.key === ' ' || e.code === 'Space' || key === 'e' || e.key === 'Shift' || key === 'q') {
+                    keyMoveActive = false;
+                }
             });
 
             window.addEventListener('resize', onWindowResize);
@@ -1116,8 +1180,8 @@
                 case 'prism': return new THREE.CylinderGeometry(0.5, 0.5, 1, 3);
                 case 'torus': return new THREE.TorusGeometry(0.4, 0.15, 16, 100);
                 case 'ring': return new THREE.RingGeometry(0.2, 0.5, 32);
-                case 'tube': return new THREE.TorusKnotGeometry(0.3, 0.1, 100, 16);
-                default: return new THREE.BoxGeometry(1,1,1);
+                case 'pretzel': return new THREE.TorusKnotGeometry(0.3, 0.1, 120, 16, 2, 3);
+                default: return new THREE.BoxGeometry(1, 1, 1);
             }
         }
 
@@ -1280,251 +1344,161 @@
         function getPresetData(name) {
             const presets = {
                 garage: [
-                    // Foundation/Floor slab
                     { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 12, y: 0.2, z: 12}, rotation: {x: 0, y: 0, z: 0} },
-                    // Back Wall
                     { type: 'box', color: '#6a737d', opacity: 1, position: {x: 0, y: 2.6, z: -5.9}, scale: {x: 12, y: 5, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Left Wall
                     { type: 'box', color: '#6a737d', opacity: 1, position: {x: -5.9, y: 2.6, z: 0}, scale: {x: 0.2, y: 5, z: 12}, rotation: {x: 0, y: 0, z: 0} },
-                    // Right Wall with a Window Gap (built of parts)
                     { type: 'box', color: '#6a737d', opacity: 1, position: {x: 5.9, y: 2.6, z: -3}, scale: {x: 0.2, y: 5, z: 6}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#6a737d', opacity: 1, position: {x: 5.9, y: 2.6, z: 3}, scale: {x: 0.2, y: 5, z: 6}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#4fc3f7', opacity: 0.4, position: {x: 5.9, y: 2.6, z: 0}, scale: {x: 0.1, y: 2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front Header Wall
                     { type: 'box', color: '#6a737d', opacity: 1, position: {x: 0, y: 4.6, z: 5.9}, scale: {x: 12, y: 1, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front Left Pillar
                     { type: 'box', color: '#444444', opacity: 1, position: {x: -5, y: 2.1, z: 5.9}, scale: {x: 2, y: 4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front Right Pillar
                     { type: 'box', color: '#444444', opacity: 1, position: {x: 5, y: 2.1, z: 5.9}, scale: {x: 2, y: 4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Metal Garage Door (Slightly Open)
                     { type: 'box', color: '#c0c0c0', opacity: 1, position: {x: 0, y: 2.8, z: 5.9}, scale: {x: 8, y: 2.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.1, metalness: 0.9 },
-                    // Roof (Slanted Canopy)
                     { type: 'box', color: '#2b2b2b', opacity: 1, position: {x: 0, y: 5.2, z: 0}, scale: {x: 13, y: 0.2, z: 13}, rotation: {x: 0.05, y: 0, z: 0} },
-                    // Workbench inside
                     { type: 'box', color: '#8b4513', opacity: 1, position: {x: 0, y: 1, z: -4.5}, scale: {x: 6, y: 0.2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#333333', opacity: 1, position: {x: -2.5, y: 0.5, z: -4.5}, scale: {x: 0.3, y: 1, z: 1.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#333333', opacity: 1, position: {x: 2.5, y: 0.5, z: -4.5}, scale: {x: 0.3, y: 1, z: 1.8}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 house: [
-                    // Main foundation
                     { type: 'box', color: '#d3d3d3', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 10, y: 0.2, z: 8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Living area brick base walls
                     { type: 'box', color: '#a0522d', opacity: 1, position: {x: 0, y: 2.1, z: 0}, scale: {x: 9.6, y: 3.8, z: 7.6}, rotation: {x: 0, y: 0, z: 0} },
-                    // Modern styled slanted roof (Two pieces)
                     { type: 'box', color: '#111111', opacity: 1, position: {x: -2.5, y: 4.8, z: 0}, scale: {x: 6, y: 0.3, z: 9}, rotation: {x: 0, y: 0, z: 0.15} },
                     { type: 'box', color: '#111111', opacity: 1, position: {x: 2.5, y: 4.8, z: 0}, scale: {x: 6, y: 0.3, z: 9}, rotation: {x: 0, y: 0, z: -0.15} },
-                    // Front door (Dark Oak)
                     { type: 'box', color: '#5c3a21', opacity: 1, position: {x: -2, y: 1.4, z: 3.85}, scale: {x: 1.6, y: 2.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Glass windows
                     { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 2, y: 2.2, z: 3.85}, scale: {x: 3, y: 1.8, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
-                    // Glass side panel
                     { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: -4.85, y: 2.2, z: 0}, scale: {x: 0.15, y: 1.8, z: 4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Chimney stack
                     { type: 'box', color: '#555555', opacity: 1, position: {x: 3.5, y: 4.5, z: -2}, scale: {x: 1.2, y: 4.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Chimney top trim
                     { type: 'box', color: '#222222', opacity: 1, position: {x: 3.5, y: 6.8, z: -2}, scale: {x: 1.5, y: 0.3, z: 1.5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Patio Steps
                     { type: 'box', color: '#666', opacity: 1, position: {x: -2, y: 0.1, z: 4.4}, scale: {x: 2.4, y: 0.2, z: 1}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 warehouse: [
-                    // Main concrete slab
                     { type: 'box', color: '#444444', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 24, y: 0.2, z: 16}, rotation: {x: 0, y: 0, z: 0} },
-                    // Corrugated steel walls
                     { type: 'box', color: '#778899', opacity: 1, position: {x: 0, y: 4.1, z: -7.9}, scale: {x: 24, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'box', color: '#778899', opacity: 1, position: {x: -11.9, y: 4.1, z: 0}, scale: {x: 0.2, y: 8, z: 16}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'box', color: '#778899', opacity: 1, position: {x: 11.9, y: 4.1, z: 0}, scale: {x: 0.2, y: 8, z: 16}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
-                    // Front Left Wall Section
                     { type: 'box', color: '#778899', opacity: 1, position: {x: -8, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front Right Wall Section
                     { type: 'box', color: '#778899', opacity: 1, position: {x: 8, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Loading bay frame
                     { type: 'box', color: '#ffaa00', opacity: 1, position: {x: 0, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Loading roll door
                     { type: 'box', color: '#dddddd', opacity: 1, position: {x: 0, y: 4.1, z: 7.8}, scale: {x: 7.6, y: 6.5, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.7 },
-                    // Skylight rows
                     { type: 'box', color: '#87ceeb', opacity: 0.4, position: {x: -5, y: 8.1, z: 0}, scale: {x: 4, y: 0.1, z: 12}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#87ceeb', opacity: 0.4, position: {x: 5, y: 8.1, z: 0}, scale: {x: 4, y: 0.1, z: 12}, rotation: {x: 0, y: 0, z: 0} },
-                    // Industrial Shelving inside (left)
                     { type: 'box', color: '#ff5500', opacity: 1, position: {x: -8, y: 3.1, z: -2}, scale: {x: 1.5, y: 6, z: 8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Shelf layers
                     { type: 'box', color: '#a0522d', opacity: 1, position: {x: -8, y: 2, z: -2}, scale: {x: 1.4, y: 0.15, z: 7.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#a0522d', opacity: 1, position: {x: -8, y: 4, z: -2}, scale: {x: 1.4, y: 0.15, z: 7.8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Wooden Pallet crates inside
-                    { type: 'box', color: '#cd853f', opacity: 1, position: {x: -8, y: 1, z: -1.5}, scale: {x: 1.2, y: 1.2, z: 1.5}, rotation: {x: 0, y: 0, z: 0} },
-                    { type: 'box', color: '#cd853f', opacity: 1, position: {x: -8, y: 2.8, z: -3}, scale: {x: 1.1, y: 1.1, z: 1.2}, rotation: {x: 0, y: 0, z: 0} }
+                    { type: 'cd853f', color: '#cd853f', opacity: 1, position: {x: -8, y: 1, z: -1.5}, scale: {x: 1.2, y: 1.2, z: 1.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cd853f', color: '#cd853f', opacity: 1, position: {x: -8, y: 2.8, z: -3}, scale: {x: 1.1, y: 1.1, z: 1.2}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 skyscraper: [
-                    // Lobby block
                     { type: 'box', color: '#2c3e50', opacity: 1, position: {x: 0, y: 1.5, z: 0}, scale: {x: 8, y: 3, z: 8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Lobby glass wrapping
                     { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 0, y: 1.5, z: 4.1}, scale: {x: 7.6, y: 2.2, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 0, y: 1.5, z: -4.1}, scale: {x: 7.6, y: 2.2, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
-                    // Main Tower Block
                     { type: 'box', color: '#1a1a1a', opacity: 1, position: {x: 0, y: 11, z: 0}, scale: {x: 6, y: 16, z: 6}, rotation: {x: 0, y: 0, z: 0} },
-                    // Glass Facade strips
                     { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 0, y: 11, z: 3.05}, scale: {x: 5, y: 14, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
                     { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 0, y: 11, z: -3.05}, scale: {x: 5, y: 14, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
                     { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 3.05, y: 11, z: 0}, scale: {x: 0.1, y: 14, z: 5}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
                     { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: -3.05, y: 11, z: 0}, scale: {x: 0.1, y: 14, z: 5}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
-                    // Spire base
                     { type: 'cylinder', color: '#777777', opacity: 1, position: {x: 0, y: 19.5, z: 0}, scale: {x: 3, y: 1, z: 3}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tower Spire Antenna
                     { type: 'cone', color: '#ff3333', opacity: 1, position: {x: 0, y: 22.5, z: 0}, scale: {x: 0.4, y: 5, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Flashing Beacon on Spire
                     { type: 'sphere', color: '#ff0000', opacity: 1, position: {x: 0, y: 25.1, z: 0}, scale: {x: 0.3, y: 0.3, z: 0.3}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 bridge: [
-                    // Left Pier Anchor
                     { type: 'box', color: '#444444', opacity: 1, position: {x: -12, y: 2.1, z: 0}, scale: {x: 3, y: 4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Right Pier Anchor
                     { type: 'box', color: '#444444', opacity: 1, position: {x: 12, y: 2.1, z: 0}, scale: {x: 3, y: 4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Roadway Deck
                     { type: 'box', color: '#222222', opacity: 1, position: {x: 0, y: 4.1, z: 0}, scale: {x: 32, y: 0.4, z: 4.5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Left Tower
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 8, z: -2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 8, z: 2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 11, z: 0}, scale: {x: 0.8, y: 0.4, z: 4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Right Tower
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 8, z: -2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 8, z: 2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 11, z: 0}, scale: {x: 0.8, y: 0.4, z: 4}, rotation: {x: 0, y: 0, z: 0} },
-                    // Suspension Cable Swags (made of Prisms/Boxes)
                     { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 7, z: -2}, scale: {x: 16, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 7, z: 2}, scale: {x: 16, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
-                    // Side handrails (Safety barriers)
                     { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 4.8, z: -2.2}, scale: {x: 32, y: 0.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 4.8, z: 2.2}, scale: {x: 32, y: 0.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 castle: [
-                    // Main Keep Walls
                     { type: 'box', color: '#8b8c8d', opacity: 1, position: {x: 0, y: 2, z: 0}, scale: {x: 12, y: 4, z: 12}, rotation: {x: 0, y: 0, z: 0} },
-                    // Battlements (Inner cuts)
                     { type: 'box', color: '#68696a', opacity: 1, position: {x: 0, y: 4, z: 0}, scale: {x: 10, y: 1, z: 10}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front archway gate
                     { type: 'box', color: '#444', opacity: 1, position: {x: 0, y: 1.2, z: 6}, scale: {x: 2.8, y: 2.4, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tower 1 (Front-Left)
                     { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: -6, y: 3.5, z: 6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: -6, y: 8, z: 6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tower 2 (Front-Right)
                     { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: 6, y: 3.5, z: 6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: 6, y: 8, z: 6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tower 3 (Back-Left)
                     { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: -6, y: 3.5, z: -6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: -6, y: 8, z: -6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tower 4 (Back-Right)
                     { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: 6, y: 3.5, z: -6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: 6, y: 8, z: -6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 tree: [
-                    // Tree Trunk base
                     { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: 0, y: 2, z: 0}, scale: {x: 0.8, y: 4, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Secondary branches
                     { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: 0.8, y: 3.5, z: 0.4}, scale: {x: 0.4, y: 2.5, z: 0.4}, rotation: {x: 0, y: 0, z: -0.6} },
                     { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: -0.8, y: 3.5, z: -0.4}, scale: {x: 0.4, y: 2.5, z: 0.4}, rotation: {x: 0, y: 0, z: 0.6} },
-                    // Leaf Clusters (Vibrant Green shades)
                     { type: 'sphere', color: '#2e7d32', opacity: 1, position: {x: 0, y: 5.5, z: 0}, scale: {x: 4.5, y: 4, z: 4.5}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#4caf50', opacity: 1, position: {x: 1.5, y: 5, z: 1}, scale: {x: 3, y: 2.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#4caf50', opacity: 1, position: {x: -1.5, y: 5, z: -1}, scale: {x: 3, y: 2.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#81c784', opacity: 1, position: {x: 0, y: 7.2, z: 0}, scale: {x: 2.5, y: 2, z: 2.5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Apples or fruits in the canopy
                     { type: 'sphere', color: '#e53935', opacity: 1, position: {x: 1, y: 4.5, z: 1.8}, scale: {x: 0.4, y: 0.4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#e53935', opacity: 1, position: {x: -1.5, y: 4.8, z: 1.2}, scale: {x: 0.4, y: 0.4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 car: [
-                    // Lower body/chassis
                     { type: 'box', color: '#d32f2f', opacity: 1, position: {x: 0, y: 0.8, z: 0}, scale: {x: 6, y: 0.8, z: 2.8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Cabin compartment
                     { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -0.4, y: 1.6, z: 0}, scale: {x: 3.2, y: 0.8, z: 2.6}, rotation: {x: 0, y: 0, z: 0} },
-                    // Windshield glass
                     { type: 'box', color: '#80deea', opacity: 0.6, position: {x: 1.25, y: 1.6, z: 0}, scale: {x: 0.1, y: 0.7, z: 2.4}, rotation: {x: 0, y: 0.15, z: 0} },
                     { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -2.05, y: 1.6, z: 0}, scale: {x: 0.1, y: 0.7, z: 2.4}, rotation: {x: 0, y: -0.15, z: 0} },
-                    // Side Window wraps
                     { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -0.4, y: 1.6, z: 1.31}, scale: {x: 3.1, y: 0.7, z: 0.02}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -0.4, y: 1.6, z: -1.31}, scale: {x: 3.1, y: 0.7, z: 0.02}, rotation: {x: 0, y: 0, z: 0} },
-                    // Front hood grille block
                     { type: 'box', color: '#111111', opacity: 1, position: {x: 3.01, y: 0.8, z: 0}, scale: {x: 0.1, y: 0.5, z: 2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Wheel Front-Left
                     { type: 'cylinder', color: '#212121', opacity: 1, position: {x: 1.8, y: 0.5, z: 1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
-                    // Wheel Front-Right
                     { type: 'cylinder', color: '#212121', opacity: 1, position: {x: 1.8, y: 0.5, z: -1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
-                    // Wheel Rear-Left
                     { type: 'cylinder', color: '#212121', opacity: 1, position: {x: -1.8, y: 0.5, z: 1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
-                    // Wheel Rear-Right
                     { type: 'cylinder', color: '#212121', opacity: 1, position: {x: -1.8, y: 0.5, z: -1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
-                    // Spoiler on trunk
                     { type: 'box', color: '#111', opacity: 1, position: {x: -2.8, y: 1.5, z: 0}, scale: {x: 0.4, y: 0.1, z: 2.8}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -2.8, y: 1.1, z: 1.1}, scale: {x: 0.2, y: 0.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -2.8, y: 1.1, z: -1.1}, scale: {x: 0.2, y: 0.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 street: [
-                    // Main dark asphalt lane
                     { type: 'box', color: '#222222', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 24, y: 0.2, z: 8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Concrete curbs
                     { type: 'box', color: '#777777', opacity: 1, position: {x: 0, y: 0.25, z: 4.1}, scale: {x: 24, y: 0.3, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#777777', opacity: 1, position: {x: 0, y: 0.25, z: -4.1}, scale: {x: 24, y: 0.3, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Sidewalk stone pavements
                     { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.2, z: 5}, scale: {x: 24, y: 0.2, z: 1.6}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.2, z: -5}, scale: {x: 24, y: 0.2, z: 1.6}, rotation: {x: 0, y: 0, z: 0} },
-                    // Center divider paint stripes
                     { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: -8, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: 0, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: 8, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
-                    // Street pole Lamp
                     { type: 'cylinder', color: '#7f8c8d', opacity: 1, position: {x: -6, y: 3.5, z: 4.5}, scale: {x: 0.2, y: 7, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#7f8c8d', opacity: 1, position: {x: -5, y: 7, z: 4.5}, scale: {x: 2.2, y: 0.2, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'cone', color: '#fff9c4', opacity: 0.8, position: {x: -4, y: 6.5, z: 4.5}, scale: {x: 0.8, y: 0.8, z: 0.8}, rotation: {x: 3.14, y: 0, z: 0} }
                 ],
                 fountain: [
-                    // Outer retaining circular wall (stacked Cylinders/Torus)
                     { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 0.3, z: 0}, scale: {x: 10, y: 0.6, z: 10}, rotation: {x: 0, y: 0, z: 0} },
-                    // Pool basin water
                     { type: 'cylinder', color: '#29b6f6', opacity: 0.7, position: {x: 0, y: 0.5, z: 0}, scale: {x: 9.6, y: 0.2, z: 9.6}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tier 2 Column
                     { type: 'cylinder', color: '#8d6e63', opacity: 1, position: {x: 0, y: 1.5, z: 0}, scale: {x: 2, y: 2.2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tier 2 Basin bowl
                     { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 2.7, z: 0}, scale: {x: 5, y: 0.4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tier 2 overflowing Water sheet
                     { type: 'cylinder', color: '#29b6f6', opacity: 0.5, position: {x: 0, y: 1.6, z: 0}, scale: {x: 5.2, y: 1.8, z: 5.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tier 3 Column
                     { type: 'cylinder', color: '#8d6e63', opacity: 1, position: {x: 0, y: 3.5, z: 0}, scale: {x: 1, y: 1.4, z: 1}, rotation: {x: 0, y: 0, z: 0} },
-                    // Tier 3 Basin bowl
                     { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 4.2, z: 0}, scale: {x: 2.5, y: 0.3, z: 2.5}, rotation: {x: 0, y: 0, z: 0} },
-                    // Top jet head
                     { type: 'cone', color: '#e0f7fa', opacity: 0.8, position: {x: 0, y: 4.8, z: 0}, scale: {x: 0.8, y: 1, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
-                    // Water splashes (represented by floating spheres)
                     { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: 1.2, y: 2.5, z: 1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: -1.2, y: 2.5, z: -1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: -1.2, y: 2.5, z: 1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: 1.2, y: 2.5, z: -1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} }
                 ],
                 fence: [
-                    // Brick Column 1 (Left)
                     { type: 'box', color: '#b0bec5', opacity: 1, position: {x: -6, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Column Cap
                     { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: -6, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
-                    // Brick Column 2 (Center)
                     { type: 'box', color: '#b0bec5', opacity: 1, position: {x: 0, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Column Cap
                     { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: 0, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
-                    // Brick Column 3 (Right)
                     { type: 'box', color: '#b0bec5', opacity: 1, position: {x: 6, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
-                    // Column Cap
                     { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: 6, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
-                    
-                    // Left Spindle panel rails
                     { type: 'box', color: '#263238', opacity: 1, position: {x: -3, y: 2.4, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'box', color: '#263238', opacity: 1, position: {x: -3, y: 0.8, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
-                    // Spindles (vertical rods) Left
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -4.8, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -3.9, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -3, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -2.1, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -1.2, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
-
-                    // Right Spindle panel rails
                     { type: 'box', color: '#263238', opacity: 1, position: {x: 3, y: 2.4, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'box', color: '#263238', opacity: 1, position: {x: 3, y: 0.8, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
-                    // Spindles (vertical rods) Right
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 1.2, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 2.1, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 3, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
@@ -1532,21 +1506,15 @@
                     { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 4.8, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 }
                 ],
                 stairs: [
-                    // Grand Landing Pad
                     { type: 'box', color: '#a1a8b0', opacity: 1, position: {x: 0, y: 3.25, z: -4}, scale: {x: 4, y: 0.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
-                    // Steps (Iterating upward and backward)
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 0.25, z: 2}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 0.75, z: 1}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 1.25, z: 0}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 1.75, z: -1}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 2.25, z: -2}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 2.75, z: -3}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
-                    
-                    // Left side concrete balustrade beam
                     { type: 'box', color: '#455a64', opacity: 1, position: {x: -2.1, y: 1.8, z: -0.5}, scale: {x: 0.2, y: 3.5, z: 6}, rotation: {x: 0.46, y: 0, z: 0} },
-                    // Right side concrete balustrade beam
                     { type: 'box', color: '#455a64', opacity: 1, position: {x: 2.1, y: 1.8, z: -0.5}, scale: {x: 0.2, y: 3.5, z: 6}, rotation: {x: 0.46, y: 0, z: 0} },
-                    // Safety side rails on top landing
                     { type: 'box', color: '#455a64', opacity: 1, position: {x: -2.1, y: 4.2, z: -4}, scale: {x: 0.2, y: 1.4, z: 3}, rotation: {x: 0, y: 0, z: 0} },
                     { type: 'box', color: '#455a64', opacity: 1, position: {x: 2.1, y: 4.2, z: -4}, scale: {x: 0.2, y: 1.4, z: 3}, rotation: {x: 0, y: 0, z: 0} }
                 ]
@@ -1554,7 +1522,6 @@
             return presets[name] || [];
         }
 
-        // ==================== IMPORT / EXPORT ====================
         function getLineNumber(text, position) { return text.substring(0, position).split('\n').length; }
 
         function importJSON() {
@@ -1638,13 +1605,32 @@
             let moved = false;
             let moveVec = new THREE.Vector3(0,0,0);
 
-            if (keys.w) { moveVec.add(direction); moved = true; }
-            if (keys.s) { moveVec.sub(direction); moved = true; }
-            if (keys.a) { moveVec.add(right); moved = true; }
-            if (keys.d) { moveVec.sub(right); moved = true; }
+            if (keys.w || keys.up) { moveVec.add(direction); moved = true; }
+            if (keys.s || keys.down) { moveVec.sub(direction); moved = true; }
+            if (keys.a || keys.left) { moveVec.add(right); moved = true; }
+            if (keys.d || keys.right) { moveVec.sub(right); moved = true; }
+
+            // Camera vertical flying controls when no object is active/selected
+            if (selectedObjects.length === 0) {
+                if (keys.space || keys.e) {
+                    moveVec.y += 1.0;
+                    moved = true;
+                }
+                if (keys.shift || keys.q) {
+                    moveVec.y -= 1.0;
+                    moved = true;
+                }
+            }
 
             if (moved) {
-                moveVec.normalize().multiplyScalar(moveSpeed);
+                const vert = moveVec.y;
+                moveVec.y = 0;
+                if (moveVec.lengthSq() > 0) {
+                    moveVec.normalize();
+                }
+                moveVec.multiplyScalar(moveSpeed);
+                moveVec.y = vert * moveSpeed; // Apply smooth vertical speed
+
                 camera.position.add(moveVec);
                 orbitControls.target.add(moveVec);
             }
@@ -1660,7 +1646,9 @@
         }
 
         // ==================== BOOT ====================
-        window.addEventListener('DOMContentLoaded', init);
+        window.onload = function () {
+            init();
+        }
     </script>
 </body>
 </html>
