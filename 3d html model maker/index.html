@@ -16,49 +16,104 @@
         }
         #toggle-btn:hover { background: #4fc3f7; }
 
+        #top-bar {
+            position: absolute; top: 15px; left: 70px; z-index: 50; display: flex; gap: 8px;
+        }
+        .top-btn {
+            background: #333337; color: #ccc; border: 1px solid #454545; padding: 10px 14px;
+            cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 13px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s;
+        }
+        .top-btn:hover:not(:disabled) { background: #454545; color: #fff; }
+        .top-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
         #sidebar {
-            width: 340px; height: 100vh; background: #252526; border-right: 2px solid #3e3e42;
+            width: 360px; height: 100vh; background: #252526; border-right: 2px solid #3e3e42;
             display: flex; flex-direction: column; z-index: 10; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
             transition: margin-left 0.3s ease; flex-shrink: 0; margin-left: 0;
-            padding-top: 50px;
+            padding-top: 60px;
         }
-        #sidebar.hidden { margin-left: -340px; }
+        #sidebar.hidden { margin-left: -360px; }
 
-        .tab-nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 10px 10px 0 10px; border-bottom: 2px solid #3e3e42; background: #1e1e1e; }
+        .tab-nav {
+            display: flex; flex-wrap: wrap; gap: 2px;
+            padding: 10px 10px 0 10px; border-bottom: 2px solid #3e3e42;
+            background: #1e1e1e;
+        }
         .tab-btn {
             flex: 1; min-width: 55px; padding: 8px 4px; font-size: 11px;
             background: #333337; border: 1px solid #454545; border-bottom: none;
             color: #ccc; cursor: pointer; border-radius: 4px 4px 0 0;
-            transition: all 0.2s; font-weight: 600;
+            transition: all 0.2s; font-weight: 600; text-align: center;
         }
+        .tab-btn:hover { background: #454545; color: #fff; }
         .tab-btn.active { background: #0277bd; color: #fff; border-color: #4fc3f7; }
 
         .tab-panel { display: none; padding: 15px; overflow-y: auto; flex: 1; }
         .tab-panel.active { display: block; }
 
         h3 { margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        
         .shape-list {
-            max-height: 180px; overflow-y: auto; padding-right: 5px;
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+            max-height: 220px; overflow-y: auto; padding-right: 5px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
         }
+        .shape-list::-webkit-scrollbar { width: 6px; }
+        .shape-list::-webkit-scrollbar-track { background: #1e1e1e; border-radius: 4px; }
+        .shape-list::-webkit-scrollbar-thumb { background: #454545; border-radius: 4px; }
 
         button, .drag-shape {
             background: #333337; color: #ccc; border: 1px solid #454545; padding: 8px 12px;
             cursor: pointer; border-radius: 4px; font-weight: 600; transition: all 0.2s ease;
-            text-align: center; font-size: 13px; display: block; width: 100%;
+            text-align: center; font-size: 12px; display: block; width: 100%;
         }
         button:hover { background: #454545; color: #fff; }
-        button.active { background: #0277bd; color: #fff; border-color: #4fc3f7; box-shadow: 0 0 8px rgba(79, 195, 247, 0.4); }
+        button.active {
+            background: #0277bd; color: #fff; border-color: #4fc3f7;
+            box-shadow: 0 0 8px rgba(79, 195, 247, 0.4);
+        }
 
-        .drag-shape { cursor: grab; border: 1px dashed #666; }
+        .drag-shape { cursor: grab; border: 1px dashed #666; padding: 8px 4px; }
+        .drag-shape:active { cursor: grabbing; border-color: #4fc3f7; }
+        .drag-shape:hover { border-color: #aaa; background: #3e3e42; }
         .drag-hint { font-size: 10px; color: #888; margin-top: 5px; text-align: center; }
 
         .control-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
         .checkbox-group { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; cursor: pointer; color:#ccc;}
         .checkbox-group input { width: 16px; height: 16px; cursor: pointer; accent-color: #4fc3f7;}
         label { font-size: 12px; color: #aaa; }
+
+        .color-picker-container { margin-bottom: 10px; }
+        .color-canvas-el {
+            width: 100%; height: 120px; border-radius: 4px; cursor: crosshair;
+            border: 1px solid #454545; display: block;
+        }
+        .hue-slider-el {
+            width: 100%; height: 20px; border-radius: 4px; cursor: pointer;
+            border: 1px solid #454545; margin-top: 8px;
+            background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+        }
+        .color-hex-row {
+            display: flex; gap: 8px; margin-top: 8px; align-items: center;
+        }
+        .color-hex-row input {
+            flex: 1; background: #333337; color: #fff; border: 1px solid #454545;
+            padding: 6px; border-radius: 4px; font-size: 12px; font-family: monospace;
+        }
+        .color-preview {
+            width: 40px; height: 35px; border-radius: 4px; border: 2px solid #fff;
+            background: #0277bd; cursor: pointer;
+        }
+        .color-palette {
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: 10px;
+        }
+        .palette-color {
+            width: 100%; aspect-ratio: 1; border-radius: 3px; cursor: pointer;
+            border: 1px solid #555; transition: transform 0.1s;
+        }
+        .palette-color:hover { transform: scale(1.2); border-color: #fff; }
 
         input[type="range"] { width: 100%; accent-color: #4fc3f7; }
         input[type="number"] { background: #333337; color: #fff; border: 1px solid #454545; padding: 6px; border-radius: 4px; font-size: 12px; width: 100%; }
@@ -81,6 +136,7 @@
             padding: 10px; border-radius: 4px; cursor: pointer; font-weight: 600;
             transition: all 0.2s; text-align: center; font-size: 12px;
         }
+        .preset-btn:hover { background: #388e3c; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 
@@ -108,26 +164,34 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .selection-badge.visible { display: block; }
+
+        .slider-group { background: #1e1e1e; padding: 10px; border-radius: 6px; border: 1px solid #3e3e42; margin-bottom: 10px; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
 </head>
 <body>
+
     <button id="toggle-btn">☰</button>
+    <div id="top-bar">
+        <button id="undo-btn" class="top-btn" disabled>↶ Undo</button>
+        <button id="redo-btn" class="top-btn" disabled>↷ Redo</button>
+    </div>
     <div id="selection-badge" class="selection-badge">0 selected</div>
 
     <div id="sidebar">
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="shapes">Shapes</button>
             <button class="tab-btn" data-tab="tools">Tools</button>
-            <button class="tab-btn" data-tab="paint">Paint</button>
+            <button class="tab-btn" data-tab="appearance">Appearance</button>
+            <button class="tab-btn" data-tab="env">Env</button>
             <button class="tab-btn" data-tab="presets">Presets</button>
-            <button class="tab-btn" data-tab="import">Import</button>
+            <button class="tab-btn" data-tab="io">I/O</button>
         </div>
 
         <div id="tab-shapes" class="tab-panel active">
-            <h3>1. Shapes Library</h3>
+            <h3>Library</h3>
             <div class="shape-list">
                 <div class="drag-shape" draggable="true" data-shape="box">Cube</div>
                 <div class="drag-shape" draggable="true" data-shape="sphere">Sphere</div>
@@ -135,22 +199,26 @@
                 <div class="drag-shape" draggable="true" data-shape="cone">Cone</div>
                 <div class="drag-shape" draggable="true" data-shape="pyramid">Pyramid</div>
                 <div class="drag-shape" draggable="true" data-shape="prism">Prism</div>
+                <div class="drag-shape" draggable="true" data-shape="torus">Torus</div>
+                <div class="drag-shape" draggable="true" data-shape="ring">Ring</div>
+                <div class="drag-shape" draggable="true" data-shape="tube">Tube</div>
             </div>
             <div class="drag-hint">Tap to spawn OR Drag to grid</div>
+            
             <div class="action-grid" style="margin-top:15px;">
                 <button id="delete-all-btn" style="background:#c0392b;">Delete All</button>
             </div>
         </div>
 
         <div id="tab-tools" class="tab-panel">
-            <h3>2. Equip Tool</h3>
+            <h3>Equip Tool</h3>
             <div class="grid">
                 <button id="tool-select" class="active" data-tool="select"><span class="highlight">[1]</span> Select</button>
                 <button id="tool-translate" data-tool="translate"><span class="highlight">[2]</span> Move</button>
                 <button id="tool-scale" data-tool="scale"><span class="highlight">[3]</span> Scale</button>
                 <button id="tool-rotate" data-tool="rotate"><span class="highlight">[4]</span> Rotate</button>
             </div>
-
+            
             <div style="margin-top: 12px; background: #1e1e1e; padding: 10px; border-radius: 6px; border: 1px solid #3e3e42;">
                 <label class="checkbox-group" style="margin-bottom: 8px;">
                     <input type="checkbox" id="snap-toggle" checked> Enable Snapping
@@ -173,64 +241,156 @@
             </div>
         </div>
 
-        <div id="tab-paint" class="tab-panel">
-            <h3>3. Paint & Color</h3>
-            <div class="drag-hint">Select object(s) first to paint</div>
-        </div>
-
-        <div id="tab-presets" class="tab-panel">
-            <h3>4. Load Preset</h3>
-            <div class="preset-grid">
-                <button class="preset-btn" data-preset="garage">🚗 Garage</button>
+        <div id="tab-appearance" class="tab-panel">
+            <h3>Material Properties</h3>
+            <div class="color-picker-container">
+                <canvas id="color-canvas" class="color-canvas-el"></canvas>
+                <div id="hue-slider" class="hue-slider-el"></div>
+                <div class="color-hex-row">
+                    <div class="color-preview" id="color-preview"></div>
+                    <input type="text" id="color-hex" value="#0277bd" maxlength="7">
+                </div>
+                <div class="color-palette" id="color-palette"></div>
+            </div>
+            
+            <div class="slider-group">
+                <div class="control-group">
+                    <label>Opacity</label>
+                    <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="1">
+                </div>
+                <div class="control-group">
+                    <label>Roughness</label>
+                    <input type="range" id="roughness-slider" min="0" max="1" step="0.05" value="0.4">
+                </div>
+                <div class="control-group">
+                    <label>Metalness</label>
+                    <input type="range" id="metalness-slider" min="0" max="1" step="0.05" value="0.1">
+                </div>
+                <label class="checkbox-group" style="margin-top: 10px;">
+                    <input type="checkbox" id="wireframe-toggle"> Wireframe Mode
+                </label>
             </div>
         </div>
 
-        <div id="tab-import" class="tab-panel">
-            <h3>5. Import JSON</h3>
-            <textarea id="import-box"></textarea>
+        <div id="tab-env" class="tab-panel">
+            <h3>Environment</h3>
+            <div class="color-picker-container">
+                <label style="margin-bottom: 5px; display: block;">Sky/Background Color</label>
+                <canvas id="bg-color-canvas" class="color-canvas-el" style="height: 80px;"></canvas>
+                <div id="bg-hue-slider" class="hue-slider-el"></div>
+                <div class="color-hex-row">
+                    <div class="color-preview" id="bg-color-preview" style="background:#1a1a1a;"></div>
+                    <input type="text" id="bg-color-hex" value="#1a1a1a" maxlength="7">
+                </div>
+            </div>
+            
+            <div class="slider-group">
+                <div class="control-group">
+                    <label>Ambient Light Intensity</label>
+                    <input type="range" id="ambient-slider" min="0" max="2" step="0.1" value="0.6">
+                </div>
+                <label class="checkbox-group" style="margin-top: 10px;">
+                    <input type="checkbox" id="grid-toggle" checked> Show Grid Map
+                </label>
+            </div>
+        </div>
+
+        <div id="tab-presets" class="tab-panel">
+            <h3>Load Preset Scene</h3>
+            <div class="preset-grid">
+                <button class="preset-btn" data-preset="garage">🚗 Garage</button>
+                <button class="preset-btn" data-preset="house">🏠 House</button>
+                <button class="preset-btn" data-preset="warehouse">🏭 Warehouse</button>
+                <button class="preset-btn" data-preset="skyscraper">🏢 Skyscraper</button>
+                <button class="preset-btn" data-preset="bridge">🌉 Bridge</button>
+                <button class="preset-btn" data-preset="castle">🏰 Castle</button>
+                <button class="preset-btn" data-preset="tree">🌳 Tree</button>
+                <button class="preset-btn" data-preset="car">🚙 Car</button>
+                <button class="preset-btn" data-preset="street">🛣️ Street</button>
+                <button class="preset-btn" data-preset="fountain">⛲ Fountain</button>
+                <button class="preset-btn" data-preset="fence">🚧 Fence</button>
+                <button class="preset-btn" data-preset="stairs">🪜 Stairs</button>
+            </div>
+            <div class="drag-hint" style="margin-top:10px;">Loads a pre-built scene. Clears current model.</div>
+        </div>
+
+        <div id="tab-io" class="tab-panel">
+            <h3>Import JSON</h3>
+            <textarea id="import-box" placeholder="Paste your model JSON here..."></textarea>
             <button id="import-btn" style="margin-top:8px; background:#0277bd;">Load Model</button>
             <div id="error-display" class="error-box"></div>
-            <h3 style="margin-top:20px;">6. Export JSON</h3>
+
+            <h3 style="margin-top:20px;">Export JSON</h3>
             <button id="export-btn" style="margin-bottom:8px; background:#2e7d32;">Generate Code</button>
-            <textarea id="code-box" readonly></textarea>
+            <textarea id="code-box" readonly placeholder="Your model JSON data will appear here..."></textarea>
             <button id="copy-btn" style="margin-top:8px;">Copy Code</button>
         </div>
     </div>
 
     <div id="canvas-container">
         <div id="selection-box"></div>
+        
         <div id="info-overlay">
-            <strong><span class="highlight">WASD</span></strong>: Move Camera<br>
-            <strong><span class="highlight">Arrow Keys</span></strong>: Move Camera<br>
+            <strong><span class="highlight">WASD / Arrows</span></strong>: Move Camera<br>
+            <strong><span class="highlight">Right Click Drag</span></strong>: Orbit Camera<br>
+            <strong><span class="highlight">Left Click Drag</span></strong>: Box Select<br>
+            <strong><span class="highlight">1, 2, 3, 4</span></strong>: Toggle Tools<br>
             <strong><span class="highlight">Ctrl+Click</span></strong>: Multi Select<br>
             <strong><span class="highlight">Ctrl+A</span></strong>: Select All<br>
-            <strong><span class="highlight">Hold Click</span></strong>: Box Select<br>
+            <strong><span class="highlight">Ctrl+Z / Ctrl+Y</span></strong>: Undo / Redo<br>
             <strong><span class="highlight">C</span></strong>: Clone object<br>
-            <strong><span class="highlight">Delete</span></strong>: Remove selected<br>
-            <strong><span class="highlight">Left Click</span></strong>: Select object<br>
-            <strong><span class="highlight">Right Drag</span></strong>: Orbit Camera
+            <strong><span class="highlight">Delete</span></strong>: Remove selected
         </div>
     </div>
 
     <script>
+        // ==================== GLOBALS ====================
         let scene, camera, renderer, orbitControls, transformControls;
-        let objects = [], selectedObjects = [], primarySelection = null, currentTool = 'select';
-        let isCtrlDown = false, isBoxSelecting = false, selectionStart = null, selectionTimer = null;
-        let deleteAllState = 0, deleteAllTimeout = null, dragStartData = null;
+        let objects = [];
+        let selectedObjects = [];
+        let primarySelection = null;
+        let currentTool = 'select';
+        let isCtrlDown = false;
+        let isBoxSelecting = false;
+        let selectionStart = null;
+        let deleteAllState = 0;
+        let deleteAllTimeout = null;
+        let dragStartData = null;
+        
+        let visualGizmo = null;
         let selectionOutline = null;
-        let keys = { w: false, a: false, s: false, d: false, arrowup: false, arrowdown: false, arrowleft: false, arrowright: false };
-
+        let gridHelper, ambientLight;
+        
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
+        const keys = { w: false, a: false, s: false, d: false };
+        
         const container = document.getElementById('canvas-container');
         const sidebar = document.getElementById('sidebar');
         const selectionBox = document.getElementById('selection-box');
         const selectionBadge = document.getElementById('selection-badge');
 
+        // Color picker states
+        const pickers = {
+            obj: { hue: 200, sat: 100, val: 50, idPrefix: '', updateFn: updateSelectedColors },
+            bg:  { hue: 0, sat: 0, val: 10, idPrefix: 'bg-', updateFn: updateSceneBackground }
+        };
+
+        // History State
+        let historyStack = [];
+        let historyIndex = -1;
+        let isRestoring = false;
+
+        // ==================== INIT ====================
         function init() {
+            if (typeof THREE === 'undefined') {
+                alert('Three.js failed to load. Check your internet connection.');
+                return;
+            }
+
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x1a1a1a);
-
+            
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(0, 10, 15);
 
@@ -239,12 +399,15 @@
             renderer.shadowMap.enabled = true;
             container.appendChild(renderer.domElement);
 
-            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
             const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
             dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
             scene.add(dirLight);
 
-            const gridHelper = new THREE.GridHelper(50, 50, 0x4fc3f7, 0x333333);
+            gridHelper = new THREE.GridHelper(50, 50, 0x4fc3f7, 0x333333);
             gridHelper.position.y = -0.01;
             scene.add(gridHelper);
 
@@ -257,55 +420,415 @@
             orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
             orbitControls.enableDamping = true;
             orbitControls.dampingFactor = 0.05;
-            orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+            orbitControls.maxPolarAngle = Math.PI / 2 - 0.05; 
+            
+            // Re-map controls: Right click to orbit, disable left click orbit for box selection
             orbitControls.mouseButtons = {
-                LEFT: THREE.MOUSE.ROTATE,
-                MIDDLE: THREE.MOUSE.DOLLY,
+                LEFT: null,
+                MIDDLE: THREE.MOUSE.PAN,
                 RIGHT: THREE.MOUSE.ROTATE
             };
 
             transformControls = new THREE.TransformControls(camera, renderer.domElement);
             transformControls.setSize(1.2);
             transformControls.setSpace('world');
-            transformControls.addEventListener('dragging-changed', e => orbitControls.enabled = !e.value);
+            transformControls.addEventListener('change', () => renderer.render(scene, camera));
+            
+            transformControls.addEventListener('dragging-changed', function (event) {
+                orbitControls.enabled = !event.value;
+                if (event.value && primarySelection) {
+                    // Save Initial State for multi-select move/rotate/scale group delta logic
+                    dragStartData = {
+                        primaryPos: primarySelection.position.clone(),
+                        primaryQuat: primarySelection.quaternion.clone(),
+                        primaryScale: primarySelection.scale.clone(),
+                        objects: selectedObjects.map(obj => ({
+                            obj: obj,
+                            pos: obj.position.clone(),
+                            quat: obj.quaternion.clone(),
+                            scale: obj.scale.clone()
+                        }))
+                    };
+                } else if (!event.value) {
+                    dragStartData = null;
+                    saveState(); // Record change for Undo
+                }
+            });
+            transformControls.addEventListener('change', handleTransformChange);
             scene.add(transformControls);
 
+            createVisualGizmo();
             createSelectionOutline();
+
             setupUI();
+            setupColorPicker('color-canvas', 'hue-slider', 'color-hex', 'color-preview', pickers.obj);
+            setupColorPicker('bg-color-canvas', 'bg-hue-slider', 'bg-color-hex', 'bg-color-preview', pickers.bg);
             setupEventListeners();
             updateSnapSettings();
+            
+            saveState(); // Initial empty state
             animate();
         }
 
+        // ==================== UNDO / REDO ====================
+        function saveState() {
+            if (isRestoring) return;
+            // Snip future history if we made a new action after undos
+            if (historyIndex < historyStack.length - 1) {
+                historyStack = historyStack.slice(0, historyIndex + 1);
+            }
+            historyStack.push(getSceneStateJSON());
+            // Cap history
+            if (historyStack.length > 50) historyStack.shift();
+            else historyIndex++;
+            updateUndoRedoUI();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                restoreState(historyStack[historyIndex]);
+            }
+        }
+
+        function redo() {
+            if (historyIndex < historyStack.length - 1) {
+                historyIndex++;
+                restoreState(historyStack[historyIndex]);
+            }
+        }
+
+        function updateUndoRedoUI() {
+            document.getElementById('undo-btn').disabled = (historyIndex <= 0);
+            document.getElementById('redo-btn').disabled = (historyIndex >= historyStack.length - 1);
+        }
+
+        function getSceneStateJSON() {
+            return objects.map(obj => ({
+                type: obj.userData.shapeType,
+                color: '#' + obj.material.color.getHexString(),
+                opacity: obj.material.opacity,
+                roughness: obj.material.roughness,
+                metalness: obj.material.metalness,
+                wireframe: obj.material.wireframe,
+                position: { x: obj.position.x, y: obj.position.y, z: obj.position.z },
+                scale: { x: obj.scale.x, y: obj.scale.y, z: obj.scale.z },
+                rotation: { x: obj.rotation.x, y: obj.rotation.y, z: obj.rotation.z }
+            }));
+        }
+
+        function restoreState(stateData) {
+            isRestoring = true;
+            clearScene(true);
+            importData(stateData, true);
+            isRestoring = false;
+            updateUndoRedoUI();
+        }
+
+        // ==================== ROBLUX-STYLE VISUAL GIZMO ====================
+        function createVisualGizmo() {
+            visualGizmo = new THREE.Group();
+            const gizmoSize = 1.8;
+            
+            const matX = new THREE.MeshBasicMaterial({ color: 0xff3333, depthTest: false, transparent: true, opacity: 0.95 });
+            const matY = new THREE.MeshBasicMaterial({ color: 0x33ff33, depthTest: false, transparent: true, opacity: 0.95 });
+            const matZ = new THREE.MeshBasicMaterial({ color: 0x3333ff, depthTest: false, transparent: true, opacity: 0.95 });
+            const matCenter = new THREE.MeshBasicMaterial({ color: 0xffaa00, depthTest: false, transparent: true, opacity: 0.95 });
+            const axisMats = { x: matX, y: matY, z: matZ };
+            
+            // Translate
+            const translateGroup = new THREE.Group();
+            ['x', 'y', 'z'].forEach(axis => {
+                const dir = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+                const mat = axisMats[axis];
+                
+                const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, gizmoSize, 8), mat);
+                shaft.position.copy(dir).multiplyScalar(gizmoSize / 2);
+                shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+                shaft.renderOrder = 999;
+                translateGroup.add(shaft);
+                
+                const head = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.35, 12), mat);
+                head.position.copy(dir).multiplyScalar(gizmoSize);
+                head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+                head.renderOrder = 999;
+                translateGroup.add(head);
+                
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), mat);
+                sphere.position.copy(dir).multiplyScalar(gizmoSize + 0.2);
+                sphere.renderOrder = 999;
+                translateGroup.add(sphere);
+            });
+            visualGizmo.add(translateGroup);
+            visualGizmo.userData.translate = translateGroup;
+            
+            // Rotate
+            const rotateGroup = new THREE.Group();
+            ['x', 'y', 'z'].forEach(axis => {
+                const mat = axisMats[axis].clone();
+                mat.opacity = 0.7;
+                
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(gizmoSize, 0.035, 8, 64), mat);
+                if (axis === 'x') ring.rotation.y = Math.PI / 2;
+                if (axis === 'y') ring.rotation.x = Math.PI / 2;
+                ring.renderOrder = 999;
+                rotateGroup.add(ring);
+                
+                const angles = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
+                angles.forEach(angle => {
+                    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), mat);
+                    const pos = new THREE.Vector3();
+                    if (axis === 'x') pos.set(0, Math.cos(angle) * gizmoSize, Math.sin(angle) * gizmoSize);
+                    else if (axis === 'y') pos.set(Math.cos(angle) * gizmoSize, 0, Math.sin(angle) * gizmoSize);
+                    else pos.set(Math.cos(angle) * gizmoSize, Math.sin(angle) * gizmoSize, 0);
+                    sphere.position.copy(pos);
+                    sphere.renderOrder = 999;
+                    rotateGroup.add(sphere);
+                });
+            });
+            visualGizmo.add(rotateGroup);
+            visualGizmo.userData.rotate = rotateGroup;
+            
+            // Scale
+            const scaleGroup = new THREE.Group();
+            ['x', 'y', 'z'].forEach(axis => {
+                const dir = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+                const mat = axisMats[axis];
+                
+                const line = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, gizmoSize, 8), mat);
+                line.position.copy(dir).multiplyScalar(gizmoSize / 2);
+                line.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+                line.renderOrder = 999;
+                scaleGroup.add(line);
+                
+                const box = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.22), mat);
+                box.position.copy(dir).multiplyScalar(gizmoSize);
+                box.renderOrder = 999;
+                scaleGroup.add(box);
+                
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), mat);
+                sphere.position.copy(dir).multiplyScalar(gizmoSize + 0.18);
+                sphere.renderOrder = 999;
+                scaleGroup.add(sphere);
+            });
+            const centerBox = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.25, 0.25), matCenter);
+            centerBox.renderOrder = 999;
+            scaleGroup.add(centerBox);
+            visualGizmo.add(scaleGroup);
+            visualGizmo.userData.scale = scaleGroup;
+            
+            visualGizmo.visible = false;
+            scene.add(visualGizmo);
+        }
+
+        function updateVisualGizmo() {
+            if (!visualGizmo || !primarySelection) {
+                if (visualGizmo) visualGizmo.visible = false;
+                return;
+            }
+            visualGizmo.visible = true;
+            visualGizmo.position.copy(primarySelection.position);
+            
+            visualGizmo.userData.translate.visible = currentTool === 'translate';
+            visualGizmo.userData.rotate.visible = currentTool === 'rotate';
+            visualGizmo.userData.scale.visible = currentTool === 'scale';
+        }
+
+        // ==================== SELECTION OUTLINE ====================
         function createSelectionOutline() {
             selectionOutline = new THREE.Group();
+            
             const boxGeo = new THREE.BoxGeometry(1, 1, 1);
             const edges = new THREE.EdgesGeometry(boxGeo);
-            selectionOutline.add(new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial({ color: 0x4fc3f7, transparent: true, opacity: 0.08, depthTest: false, depthWrite: false })));
-            selectionOutline.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x4fc3f7, depthTest: false, depthWrite: false, transparent: true, opacity: 0.8 })));
+            
+            const fillMat = new THREE.MeshBasicMaterial({ 
+                color: 0x4fc3f7, transparent: true, opacity: 0.08, depthTest: false, depthWrite: false
+            });
+            const lineMat = new THREE.LineBasicMaterial({ 
+                color: 0x4fc3f7, depthTest: false, depthWrite: false, transparent: true, opacity: 0.8
+            });
+            
+            const fill = new THREE.Mesh(boxGeo, fillMat);
+            fill.renderOrder = 998;
+            const lines = new THREE.LineSegments(edges, lineMat);
+            lines.renderOrder = 999;
+            
+            selectionOutline.add(fill);
+            selectionOutline.add(lines);
             selectionOutline.visible = false;
             scene.add(selectionOutline);
         }
 
         function updateSelectionOutline() {
-            if (!selectionOutline || selectedObjects.length === 0) {
-                if (selectionOutline) selectionOutline.visible = false;
+            if (!selectionOutline) return;
+            if (selectedObjects.length === 0) {
+                selectionOutline.visible = false;
                 return;
             }
+            
             const box = new THREE.Box3();
             selectedObjects.forEach(obj => box.expandByObject(obj));
+            
             const center = new THREE.Vector3();
             const size = new THREE.Vector3();
             box.getCenter(center);
             box.getSize(size);
+            
+            size.addScalar(0.1);
+            
             selectionOutline.position.copy(center);
-            selectionOutline.scale.copy(size.addScalar(0.1));
+            selectionOutline.scale.copy(size);
             selectionOutline.visible = true;
         }
 
+        // ==================== MULTI-SELECT TRANSFORMS ====================
+        function handleTransformChange() {
+            if (dragStartData && selectedObjects.length > 1 && primarySelection) {
+                const pPos = primarySelection.position;
+                const pQuat = primarySelection.quaternion;
+                const pScale = primarySelection.scale;
+
+                const deltaQuat = pQuat.clone().multiply(dragStartData.primaryQuat.clone().invert());
+                const scaleRatio = new THREE.Vector3(
+                    pScale.x / dragStartData.primaryScale.x,
+                    pScale.y / dragStartData.primaryScale.y,
+                    pScale.z / dragStartData.primaryScale.z
+                );
+
+                dragStartData.objects.forEach(data => {
+                    if (data.obj === primarySelection) return;
+                    
+                    const offset = data.pos.clone().sub(dragStartData.primaryPos);
+                    offset.multiply(scaleRatio);
+                    offset.applyQuaternion(deltaQuat);
+                    
+                    data.obj.position.copy(pPos).add(offset);
+                    data.obj.quaternion.copy(deltaQuat).multiply(data.quat);
+                    data.obj.scale.copy(data.scale).multiply(scaleRatio);
+                });
+                updateSelectionOutline();
+            }
+        }
+
+        // ==================== COLOR PICKER (REUSABLE) ====================
+        function setupColorPicker(canvasId, sliderId, hexId, previewId, stateObj) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const hueSlider = document.getElementById(sliderId);
+            const hexInput = document.getElementById(hexId);
+            const preview = document.getElementById(previewId);
+
+            function drawColorCanvas() {
+                const w = canvas.width || canvas.clientWidth;
+                const h = canvas.height || canvas.clientHeight;
+                if (canvas.width !== w) canvas.width = w;
+                if (canvas.height !== h) canvas.height = h;
+
+                const gradWhite = ctx.createLinearGradient(0, 0, w, 0);
+                gradWhite.addColorStop(0, 'white');
+                gradWhite.addColorStop(1, `hsl(${stateObj.hue}, 100%, 50%)`);
+                ctx.fillStyle = gradWhite;
+                ctx.fillRect(0, 0, w, h);
+
+                const gradBlack = ctx.createLinearGradient(0, 0, 0, h);
+                gradBlack.addColorStop(0, 'transparent');
+                gradBlack.addColorStop(1, 'black');
+                ctx.fillStyle = gradBlack;
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            function hsvToRgb(h, s, v) {
+                s /= 100; v /= 100;
+                const c = v * s;
+                const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                const m = v - c;
+                let r, g, b;
+                if (h < 60) { r = c; g = x; b = 0; }
+                else if (h < 120) { r = x; g = c; b = 0; }
+                else if (h < 180) { r = 0; g = c; b = x; }
+                else if (h < 240) { r = 0; g = x; b = c; }
+                else if (h < 300) { r = x; g = 0; b = c; }
+                else { r = c; g = 0; b = x; }
+                return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+            }
+
+            function rgbToHex(r, g, b) {
+                return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+            }
+
+            function updateColorFromPicker() {
+                const rgb = hsvToRgb(stateObj.hue, stateObj.sat, stateObj.val);
+                const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+                hexInput.value = hex;
+                preview.style.background = hex;
+                stateObj.updateFn(hex);
+            }
+
+            function onCanvasMouse(e) {
+                if (e.type === 'mousemove' && e.buttons !== 1) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+                stateObj.sat = x * 100;
+                stateObj.val = 100 - y * 100;
+                updateColorFromPicker();
+            }
+
+            canvas.addEventListener('mousedown', onCanvasMouse);
+            canvas.addEventListener('mousemove', onCanvasMouse);
+
+            function onSliderMouse(e) {
+                if (e.type === 'mousemove' && e.buttons !== 1) return;
+                const rect = hueSlider.getBoundingClientRect();
+                stateObj.hue = Math.max(0, Math.min(360, ((e.clientX - rect.left) / rect.width) * 360));
+                drawColorCanvas();
+                updateColorFromPicker();
+            }
+
+            hueSlider.addEventListener('mousedown', onSliderMouse);
+            hueSlider.addEventListener('mousemove', onSliderMouse);
+
+            hexInput.addEventListener('change', (e) => {
+                let hex = e.target.value;
+                if (!hex.startsWith('#')) hex = '#' + hex;
+                if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                    preview.style.background = hex;
+                    stateObj.updateFn(hex);
+                }
+            });
+
+            setTimeout(drawColorCanvas, 100);
+
+            if(stateObj === pickers.obj) {
+                const palette = document.getElementById('color-palette');
+                const colors = [
+                    '#000000','#333333','#666666','#999999','#cccccc','#ffffff',
+                    '#ff0000','#ff8800','#ffff00','#00ff00','#00ffff','#0000ff',
+                    '#8800ff','#ff00ff','#8b4513','#a0522d','#f5deb3','#6495ed'
+                ];
+                colors.forEach(color => {
+                    const div = document.createElement('div');
+                    div.className = 'palette-color';
+                    div.style.background = color;
+                    div.addEventListener('click', () => {
+                        hexInput.value = color;
+                        preview.style.background = color;
+                        stateObj.updateFn(color);
+                    });
+                    palette.appendChild(div);
+                });
+            }
+        }
+
+        // ==================== UI SETUP ====================
         function setupUI() {
-            document.querySelectorAll('[data-tool]').forEach(btn => {
-                btn.addEventListener('click', () => setTool(btn.dataset.tool));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+                });
             });
 
             document.getElementById('toggle-btn').addEventListener('click', () => {
@@ -313,9 +836,31 @@
                 setTimeout(onWindowResize, 300);
             });
 
+            document.querySelectorAll('.drag-shape').forEach(shape => {
+                shape.addEventListener('click', () => addShape(shape.dataset.shape));
+                shape.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('shapeType', shape.dataset.shape);
+                });
+            });
+
+            document.querySelectorAll('[data-tool]').forEach(btn => {
+                btn.addEventListener('click', () => setTool(btn.dataset.tool));
+            });
+
+            document.getElementById('undo-btn').addEventListener('click', undo);
+            document.getElementById('redo-btn').addEventListener('click', redo);
+
             document.getElementById('snap-toggle').addEventListener('change', updateSnapSettings);
             document.getElementById('snap-move-val').addEventListener('change', updateSnapSettings);
             document.getElementById('snap-rotate-val').addEventListener('change', updateSnapSettings);
+            
+            document.getElementById('opacity-slider').addEventListener('change', (e) => updateMaterialProp('opacity', parseFloat(e.target.value)));
+            document.getElementById('roughness-slider').addEventListener('change', (e) => updateMaterialProp('roughness', parseFloat(e.target.value)));
+            document.getElementById('metalness-slider').addEventListener('change', (e) => updateMaterialProp('metalness', parseFloat(e.target.value)));
+            document.getElementById('wireframe-toggle').addEventListener('change', (e) => updateMaterialProp('wireframe', e.target.checked));
+            
+            document.getElementById('ambient-slider').addEventListener('input', (e) => ambientLight.intensity = parseFloat(e.target.value));
+            document.getElementById('grid-toggle').addEventListener('change', (e) => gridHelper.visible = e.target.checked);
 
             document.getElementById('clone-btn').addEventListener('click', duplicateSelected);
             document.getElementById('delete-btn').addEventListener('click', deleteSelected);
@@ -324,104 +869,119 @@
             document.getElementById('export-btn').addEventListener('click', generateJSON);
             document.getElementById('copy-btn').addEventListener('click', copyCode);
 
-            document.querySelectorAll('.drag-shape').forEach(shape => {
-                shape.addEventListener('click', () => addShape(shape.dataset.shape));
-                shape.addEventListener('dragstart', e => e.dataTransfer.setData('shapeType', shape.dataset.shape));
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => loadPreset(btn.dataset.preset));
             });
         }
 
+        // ==================== EVENT LISTENERS ====================
         function setupEventListeners() {
-            container.addEventListener('dragover', e => e.preventDefault());
-            container.addEventListener('drop', e => {
+            container.addEventListener('dragover', (e) => e.preventDefault());
+
+            container.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const type = e.dataTransfer.getData('shapeType');
                 if (!type) return;
+
                 const rect = renderer.domElement.getBoundingClientRect();
                 mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
                 mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
                 raycaster.setFromCamera(mouse, camera);
-                const hits = raycaster.intersectObjects(scene.children);
-                const floorHit = hits.find(h => h.object.name === 'floor');
-                const pos = floorHit ? floorHit.point.clone() : new THREE.Vector3(0, 0.5, 0);
-                pos.y = 0.5;
-                addShape(type, pos);
+                const intersects = raycaster.intersectObjects(scene.children);
+                const floorHit = intersects.find(h => h.object.name === 'floor');
+
+                let spawnPos = new THREE.Vector3(0, 0.5, 0);
+                if (floorHit) {
+                    spawnPos.copy(floorHit.point);
+                    spawnPos.y = 0.5;
+                }
+                addShape(type, spawnPos);
             });
 
-            renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
             renderer.domElement.addEventListener('pointerdown', onPointerDown);
-            renderer.domElement.addEventListener('pointermove', onPointerMove);
-            renderer.domElement.addEventListener('pointerup', onPointerUp);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
 
-            document.addEventListener('keydown', e => {
+            document.addEventListener('keydown', (e) => {
                 const key = e.key.toLowerCase();
                 if (key === 'control') isCtrlDown = true;
-                if (key in keys) keys[key] = true;
+                
+                if (key === 'w' || key === 'arrowup') keys.w = true;
+                if (key === 'a' || key === 'arrowleft') keys.a = true;
+                if (key === 's' || key === 'arrowdown') keys.s = true;
+                if (key === 'd' || key === 'arrowright') keys.d = true;
 
                 if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
-                    if (key === '1') setTool('select');
-                    if (key === '2') setTool('translate');
-                    if (key === '3') setTool('scale');
-                    if (key === '4') setTool('rotate');
-                    if (key === 'c') duplicateSelected();
-                    if (key === 'delete' || key === 'backspace') deleteSelected();
-                    if (e.ctrlKey && key === 'a') {
-                        e.preventDefault();
-                        selectAll();
+                    if (e.ctrlKey) {
+                        if (key === 'a') { e.preventDefault(); selectAll(); }
+                        if (key === 'z') { e.preventDefault(); undo(); }
+                        if (key === 'y') { e.preventDefault(); redo(); }
+                    } else {
+                        if (key === '1') setTool('select');
+                        if (key === '2') setTool('translate');
+                        if (key === '3') setTool('scale');
+                        if (key === '4') setTool('rotate');
+                        if (key === 'c') duplicateSelected();
+                        if (key === 'delete' || key === 'backspace') deleteSelected();
                     }
                 }
             });
 
-            document.addEventListener('keyup', e => {
+            document.addEventListener('keyup', (e) => {
                 const key = e.key.toLowerCase();
                 if (key === 'control') isCtrlDown = false;
-                if (key in keys) keys[key] = false;
+                if (key === 'w' || key === 'arrowup') keys.w = false;
+                if (key === 'a' || key === 'arrowleft') keys.a = false;
+                if (key === 's' || key === 'arrowdown') keys.s = false;
+                if (key === 'd' || key === 'arrowright') keys.d = false;
             });
 
             window.addEventListener('resize', onWindowResize);
         }
 
+        // ==================== INSTANT BOX SELECT ====================
         function onPointerDown(e) {
-            if (e.button !== 0) return;
-            if (transformControls.dragging) return;
+            if (e.button !== 0 || transformControls.dragging) return;
             selectionStart = { x: e.clientX, y: e.clientY };
-            selectionTimer = null;
+            isBoxSelecting = false;
         }
 
         function onPointerMove(e) {
-            if (!selectionStart) return;
-            const dx = e.clientX - selectionStart.x;
-            const dy = e.clientY - selectionStart.y;
-            if (!isBoxSelecting && Math.sqrt(dx * dx + dy * dy) > 8) {
-                isBoxSelecting = true;
-                orbitControls.enabled = false;
-                selectionBox.style.display = 'block';
-                selectionBox.style.left = selectionStart.x + 'px';
-                selectionBox.style.top = selectionStart.y + 'px';
-            }
-            if (isBoxSelecting) {
-                const left = Math.min(selectionStart.x, e.clientX);
-                const top = Math.min(selectionStart.y, e.clientY);
-                const width = Math.abs(e.clientX - selectionStart.x);
-                const height = Math.abs(e.clientY - selectionStart.y);
-                selectionBox.style.left = left + 'px';
-                selectionBox.style.top = top + 'px';
-                selectionBox.style.width = width + 'px';
-                selectionBox.style.height = height + 'px';
+            if ((e.buttons & 1) && selectionStart && !transformControls.dragging) {
+                const dx = e.clientX - selectionStart.x;
+                const dy = e.clientY - selectionStart.y;
+                
+                if (!isBoxSelecting && Math.hypot(dx, dy) > 4) {
+                    isBoxSelecting = true;
+                    selectionBox.style.display = 'block';
+                }
+                
+                if (isBoxSelecting) {
+                    const left = Math.min(selectionStart.x, e.clientX);
+                    const top = Math.min(selectionStart.y, e.clientY);
+                    const width = Math.abs(e.clientX - selectionStart.x);
+                    const height = Math.abs(e.clientY - selectionStart.y);
+                    selectionBox.style.left = left + 'px';
+                    selectionBox.style.top = top + 'px';
+                    selectionBox.style.width = width + 'px';
+                    selectionBox.style.height = height + 'px';
+                }
             }
         }
 
         function onPointerUp(e) {
+            if (e.button !== 0) return;
+            
             if (isBoxSelecting) {
                 finalizeBoxSelection();
                 isBoxSelecting = false;
-                orbitControls.enabled = true;
                 selectionBox.style.display = 'none';
                 selectionBox.style.width = '0px';
                 selectionBox.style.height = '0px';
-            } else if (selectionStart) {
+            } else if (selectionStart && !transformControls.dragging) {
                 handleClick(e);
             }
-
             selectionStart = null;
         }
 
@@ -437,21 +997,47 @@
                 const obj = intersects[0].object;
                 if (isCtrlDown) toggleSelection(obj);
                 else selectSingle(obj);
-            } else if (!isCtrlDown) {
-                deselectAll();
+            } else {
+                if (!isCtrlDown) deselectAll();
             }
         }
 
+        function finalizeBoxSelection() {
+            const sb = selectionBox.getBoundingClientRect();
+            const rectLeft = sb.left, rectTop = sb.top, rectRight = sb.right, rectBottom = sb.bottom;
+            const newlySelected = [];
+
+            objects.forEach(obj => {
+                const pos = obj.position.clone();
+                pos.project(camera);
+                const screenX = (pos.x * 0.5 + 0.5) * container.clientWidth + container.getBoundingClientRect().left;
+                const screenY = (-pos.y * 0.5 + 0.5) * container.clientHeight + container.getBoundingClientRect().top;
+
+                if (screenX >= rectLeft && screenX <= rectRight && screenY >= rectTop && screenY <= rectBottom) {
+                    newlySelected.push(obj);
+                }
+            });
+
+            if (newlySelected.length > 0) {
+                if (!isCtrlDown) deselectAll();
+                newlySelected.forEach(obj => addToSelection(obj));
+            }
+        }
+
+        // ==================== SELECTION LOGIC ====================
         function selectSingle(obj) {
             deselectAll();
             addToSelection(obj);
         }
 
         function addToSelection(obj) {
-            if (!selectedObjects.includes(obj)) selectedObjects.push(obj);
+            if (!selectedObjects.includes(obj)) {
+                selectedObjects.push(obj);
+                updateSelectionHighlight(obj, true);
+            }
             primarySelection = obj;
-            updateSelectionHighlight(obj, true);
             updateTransformControls();
+            updateUIFromSelection();
             updateBadge();
             updateSelectionOutline();
         }
@@ -484,8 +1070,13 @@
         }
 
         function updateBadge() {
-            selectionBadge.textContent = selectedObjects.length + ' selected';
-            selectionBadge.classList.toggle('visible', selectedObjects.length > 0);
+            const count = selectedObjects.length;
+            if (count > 0) {
+                selectionBadge.textContent = count + ' selected';
+                selectionBadge.classList.add('visible');
+            } else {
+                selectionBadge.classList.remove('visible');
+            }
         }
 
         function updateSelectionHighlight(obj, selected) {
@@ -501,27 +1092,56 @@
             }
         }
 
-        function addShape(type, position = new THREE.Vector3(0, 0.5, 0)) {
-            let geometry;
-            switch(type) {
-                case 'box': geometry = new THREE.BoxGeometry(1, 1, 1); break;
-                case 'sphere': geometry = new THREE.SphereGeometry(0.5, 32, 32); break;
-                case 'cylinder': geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32); break;
-                case 'cone': geometry = new THREE.ConeGeometry(0.5, 1, 32); break;
-                case 'pyramid': geometry = new THREE.ConeGeometry(0.5, 1, 4); break;
-                case 'prism': geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 3); break;
-                default: return;
+        function updateUIFromSelection() {
+            if (primarySelection) {
+                const mat = primarySelection.material;
+                const hex = '#' + mat.color.getHexString();
+                document.getElementById('color-hex').value = hex;
+                document.getElementById('color-preview').style.background = hex;
+                document.getElementById('opacity-slider').value = mat.opacity;
+                document.getElementById('roughness-slider').value = mat.roughness;
+                document.getElementById('metalness-slider').value = mat.metalness;
+                document.getElementById('wireframe-toggle').checked = mat.wireframe;
             }
+        }
 
+        // ==================== CORE FEATURES ====================
+        function getGeometryForType(type) {
+            switch(type) {
+                case 'box': return new THREE.BoxGeometry(1, 1, 1);
+                case 'sphere': return new THREE.SphereGeometry(0.5, 32, 32);
+                case 'cylinder': return new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                case 'cone': return new THREE.ConeGeometry(0.5, 1, 32);
+                case 'pyramid': return new THREE.ConeGeometry(0.5, 1, 4);
+                case 'prism': return new THREE.CylinderGeometry(0.5, 0.5, 1, 3);
+                case 'torus': return new THREE.TorusGeometry(0.4, 0.15, 16, 100);
+                case 'ring': return new THREE.RingGeometry(0.2, 0.5, 32);
+                case 'tube': return new THREE.TorusKnotGeometry(0.3, 0.1, 100, 16);
+                default: return new THREE.BoxGeometry(1,1,1);
+            }
+        }
+
+        function addShape(type, position = new THREE.Vector3(0, 0.5, 0)) {
+            const geometry = getGeometryForType(type);
             const material = new THREE.MeshStandardMaterial({
-                color: '#0277bd',
-                roughness: 0.4,
-                metalness: 0.1,
+                color: document.getElementById('color-hex').value || '#0277bd',
+                roughness: parseFloat(document.getElementById('roughness-slider').value) || 0.4,
+                metalness: parseFloat(document.getElementById('metalness-slider').value) || 0.1,
                 transparent: true,
-                opacity: 1
+                opacity: parseFloat(document.getElementById('opacity-slider').value) || 1.0,
+                wireframe: document.getElementById('wireframe-toggle').checked
             });
+            if (type === 'ring') material.side = THREE.DoubleSide;
 
             const mesh = new THREE.Mesh(geometry, material);
+            
+            if (document.getElementById('snap-toggle').checked) {
+                const snapVal = parseFloat(document.getElementById('snap-move-val').value) || 1;
+                position.x = Math.round(position.x / snapVal) * snapVal;
+                position.y = Math.round(position.y / snapVal) * snapVal;
+                position.z = Math.round(position.z / snapVal) * snapVal;
+            }
+            
             mesh.position.copy(position);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
@@ -530,9 +1150,13 @@
             scene.add(mesh);
             objects.push(mesh);
             selectSingle(mesh);
+            
+            if (currentTool === 'select') setTool('translate');
+            saveState();
         }
 
         function setTool(toolMode) {
+            if (currentTool === toolMode && toolMode !== 'select') toolMode = 'select';
             currentTool = toolMode;
             document.querySelectorAll('[data-tool]').forEach(btn => btn.classList.remove('active'));
             document.getElementById('tool-' + toolMode).classList.add('active');
@@ -556,88 +1180,486 @@
 
         function duplicateSelected() {
             if (!primarySelection) return;
-            const clone = primarySelection.clone();
-            clone.geometry = primarySelection.geometry.clone();
-            clone.material = primarySelection.material.clone();
-            clone.position.x += 1;
-            scene.add(clone);
-            objects.push(clone);
-            selectSingle(clone);
+            const originals = [...selectedObjects];
+            const newSelections = [];
+            
+            originals.forEach(original => {
+                const type = original.userData.shapeType;
+                let offset = document.getElementById('snap-toggle').checked ? (parseFloat(document.getElementById('snap-move-val').value) || 1) : 1;
+                const spawnPos = original.position.clone();
+                spawnPos.x += offset;
+
+                const geometry = getGeometryForType(type);
+                const material = original.material.clone();
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.copy(spawnPos);
+                mesh.scale.copy(original.scale);
+                mesh.rotation.copy(original.rotation);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                mesh.userData = { shapeType: type };
+
+                scene.add(mesh);
+                objects.push(mesh);
+                newSelections.push(mesh);
+            });
+
+            deselectAll();
+            newSelections.forEach(obj => addToSelection(obj));
+            saveState();
         }
 
         function deleteSelected() {
             if (selectedObjects.length === 0) return;
-            selectedObjects.forEach(obj => {
+            const toDelete = [...selectedObjects];
+            transformControls.detach();
+            
+            toDelete.forEach(obj => {
                 scene.remove(obj);
                 objects = objects.filter(o => o !== obj);
             });
-            deselectAll();
+            
+            selectedObjects = [];
+            primarySelection = null;
+            updateBadge();
+            updateSelectionOutline();
+            saveState();
         }
 
         function deleteAll() {
+            const btn = document.getElementById('delete-all-btn');
+            if (deleteAllState === 0) {
+                btn.textContent = 'Click again to confirm';
+                btn.classList.add('delete-all-confirm');
+                deleteAllState = 1;
+                if (deleteAllTimeout) clearTimeout(deleteAllTimeout);
+                deleteAllTimeout = setTimeout(() => {
+                    btn.textContent = 'Delete All';
+                    btn.classList.remove('delete-all-confirm');
+                    deleteAllState = 0;
+                }, 3000);
+            } else {
+                clearScene();
+                btn.textContent = 'Delete All';
+                btn.classList.remove('delete-all-confirm');
+                deleteAllState = 0;
+                saveState();
+            }
+        }
+
+        function clearScene(skipSave = false) {
             objects.forEach(obj => scene.remove(obj));
             objects = [];
             deselectAll();
+            if(!skipSave) saveState();
         }
 
-        function importJSON() {}
-        function generateJSON() {}
-        function copyCode() {}
+        function updateSelectedColors(hex) {
+            selectedObjects.forEach(obj => obj.material.color.set(hex));
+            if(!isRestoring && selectedObjects.length > 0) saveState();
+        }
+        
+        function updateSceneBackground(hex) {
+            scene.background.set(hex);
+        }
 
+        function updateMaterialProp(prop, val) {
+            selectedObjects.forEach(obj => obj.material[prop] = val);
+            if(selectedObjects.length > 0) saveState();
+        }
+
+        // ==================== PRESETS ====================
+        function loadPreset(name) {
+            clearScene(true);
+            const data = getPresetData(name);
+            importData(data, true);
+            saveState();
+        }
+
+        function getPresetData(name) {
+            const presets = {
+                garage: [
+                    // Foundation/Floor slab
+                    { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 12, y: 0.2, z: 12}, rotation: {x: 0, y: 0, z: 0} },
+                    // Back Wall
+                    { type: 'box', color: '#6a737d', opacity: 1, position: {x: 0, y: 2.6, z: -5.9}, scale: {x: 12, y: 5, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Left Wall
+                    { type: 'box', color: '#6a737d', opacity: 1, position: {x: -5.9, y: 2.6, z: 0}, scale: {x: 0.2, y: 5, z: 12}, rotation: {x: 0, y: 0, z: 0} },
+                    // Right Wall with a Window Gap (built of parts)
+                    { type: 'box', color: '#6a737d', opacity: 1, position: {x: 5.9, y: 2.6, z: -3}, scale: {x: 0.2, y: 5, z: 6}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#6a737d', opacity: 1, position: {x: 5.9, y: 2.6, z: 3}, scale: {x: 0.2, y: 5, z: 6}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#4fc3f7', opacity: 0.4, position: {x: 5.9, y: 2.6, z: 0}, scale: {x: 0.1, y: 2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front Header Wall
+                    { type: 'box', color: '#6a737d', opacity: 1, position: {x: 0, y: 4.6, z: 5.9}, scale: {x: 12, y: 1, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front Left Pillar
+                    { type: 'box', color: '#444444', opacity: 1, position: {x: -5, y: 2.1, z: 5.9}, scale: {x: 2, y: 4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front Right Pillar
+                    { type: 'box', color: '#444444', opacity: 1, position: {x: 5, y: 2.1, z: 5.9}, scale: {x: 2, y: 4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Metal Garage Door (Slightly Open)
+                    { type: 'box', color: '#c0c0c0', opacity: 1, position: {x: 0, y: 2.8, z: 5.9}, scale: {x: 8, y: 2.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.1, metalness: 0.9 },
+                    // Roof (Slanted Canopy)
+                    { type: 'box', color: '#2b2b2b', opacity: 1, position: {x: 0, y: 5.2, z: 0}, scale: {x: 13, y: 0.2, z: 13}, rotation: {x: 0.05, y: 0, z: 0} },
+                    // Workbench inside
+                    { type: 'box', color: '#8b4513', opacity: 1, position: {x: 0, y: 1, z: -4.5}, scale: {x: 6, y: 0.2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#333333', opacity: 1, position: {x: -2.5, y: 0.5, z: -4.5}, scale: {x: 0.3, y: 1, z: 1.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#333333', opacity: 1, position: {x: 2.5, y: 0.5, z: -4.5}, scale: {x: 0.3, y: 1, z: 1.8}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                house: [
+                    // Main foundation
+                    { type: 'box', color: '#d3d3d3', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 10, y: 0.2, z: 8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Living area brick base walls
+                    { type: 'box', color: '#a0522d', opacity: 1, position: {x: 0, y: 2.1, z: 0}, scale: {x: 9.6, y: 3.8, z: 7.6}, rotation: {x: 0, y: 0, z: 0} },
+                    // Modern styled slanted roof (Two pieces)
+                    { type: 'box', color: '#111111', opacity: 1, position: {x: -2.5, y: 4.8, z: 0}, scale: {x: 6, y: 0.3, z: 9}, rotation: {x: 0, y: 0, z: 0.15} },
+                    { type: 'box', color: '#111111', opacity: 1, position: {x: 2.5, y: 4.8, z: 0}, scale: {x: 6, y: 0.3, z: 9}, rotation: {x: 0, y: 0, z: -0.15} },
+                    // Front door (Dark Oak)
+                    { type: 'box', color: '#5c3a21', opacity: 1, position: {x: -2, y: 1.4, z: 3.85}, scale: {x: 1.6, y: 2.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Glass windows
+                    { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 2, y: 2.2, z: 3.85}, scale: {x: 3, y: 1.8, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
+                    // Glass side panel
+                    { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: -4.85, y: 2.2, z: 0}, scale: {x: 0.15, y: 1.8, z: 4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Chimney stack
+                    { type: 'box', color: '#555555', opacity: 1, position: {x: 3.5, y: 4.5, z: -2}, scale: {x: 1.2, y: 4.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Chimney top trim
+                    { type: 'box', color: '#222222', opacity: 1, position: {x: 3.5, y: 6.8, z: -2}, scale: {x: 1.5, y: 0.3, z: 1.5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Patio Steps
+                    { type: 'box', color: '#666', opacity: 1, position: {x: -2, y: 0.1, z: 4.4}, scale: {x: 2.4, y: 0.2, z: 1}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                warehouse: [
+                    // Main concrete slab
+                    { type: 'box', color: '#444444', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 24, y: 0.2, z: 16}, rotation: {x: 0, y: 0, z: 0} },
+                    // Corrugated steel walls
+                    { type: 'box', color: '#778899', opacity: 1, position: {x: 0, y: 4.1, z: -7.9}, scale: {x: 24, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'box', color: '#778899', opacity: 1, position: {x: -11.9, y: 4.1, z: 0}, scale: {x: 0.2, y: 8, z: 16}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'box', color: '#778899', opacity: 1, position: {x: 11.9, y: 4.1, z: 0}, scale: {x: 0.2, y: 8, z: 16}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    // Front Left Wall Section
+                    { type: 'box', color: '#778899', opacity: 1, position: {x: -8, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front Right Wall Section
+                    { type: 'box', color: '#778899', opacity: 1, position: {x: 8, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Loading bay frame
+                    { type: 'box', color: '#ffaa00', opacity: 1, position: {x: 0, y: 4.1, z: 7.9}, scale: {x: 8, y: 8, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Loading roll door
+                    { type: 'box', color: '#dddddd', opacity: 1, position: {x: 0, y: 4.1, z: 7.8}, scale: {x: 7.6, y: 6.5, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.7 },
+                    // Skylight rows
+                    { type: 'box', color: '#87ceeb', opacity: 0.4, position: {x: -5, y: 8.1, z: 0}, scale: {x: 4, y: 0.1, z: 12}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#87ceeb', opacity: 0.4, position: {x: 5, y: 8.1, z: 0}, scale: {x: 4, y: 0.1, z: 12}, rotation: {x: 0, y: 0, z: 0} },
+                    // Industrial Shelving inside (left)
+                    { type: 'box', color: '#ff5500', opacity: 1, position: {x: -8, y: 3.1, z: -2}, scale: {x: 1.5, y: 6, z: 8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Shelf layers
+                    { type: 'box', color: '#a0522d', opacity: 1, position: {x: -8, y: 2, z: -2}, scale: {x: 1.4, y: 0.15, z: 7.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#a0522d', opacity: 1, position: {x: -8, y: 4, z: -2}, scale: {x: 1.4, y: 0.15, z: 7.8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Wooden Pallet crates inside
+                    { type: 'box', color: '#cd853f', opacity: 1, position: {x: -8, y: 1, z: -1.5}, scale: {x: 1.2, y: 1.2, z: 1.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#cd853f', opacity: 1, position: {x: -8, y: 2.8, z: -3}, scale: {x: 1.1, y: 1.1, z: 1.2}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                skyscraper: [
+                    // Lobby block
+                    { type: 'box', color: '#2c3e50', opacity: 1, position: {x: 0, y: 1.5, z: 0}, scale: {x: 8, y: 3, z: 8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Lobby glass wrapping
+                    { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 0, y: 1.5, z: 4.1}, scale: {x: 7.6, y: 2.2, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#87ceeb', opacity: 0.5, position: {x: 0, y: 1.5, z: -4.1}, scale: {x: 7.6, y: 2.2, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
+                    // Main Tower Block
+                    { type: 'box', color: '#1a1a1a', opacity: 1, position: {x: 0, y: 11, z: 0}, scale: {x: 6, y: 16, z: 6}, rotation: {x: 0, y: 0, z: 0} },
+                    // Glass Facade strips
+                    { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 0, y: 11, z: 3.05}, scale: {x: 5, y: 14, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
+                    { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 0, y: 11, z: -3.05}, scale: {x: 5, y: 14, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
+                    { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: 3.05, y: 11, z: 0}, scale: {x: 0.1, y: 14, z: 5}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
+                    { type: 'box', color: '#00d2ff', opacity: 0.6, position: {x: -3.05, y: 11, z: 0}, scale: {x: 0.1, y: 14, z: 5}, rotation: {x: 0, y: 0, z: 0}, roughness: 0.0, metalness: 0.9 },
+                    // Spire base
+                    { type: 'cylinder', color: '#777777', opacity: 1, position: {x: 0, y: 19.5, z: 0}, scale: {x: 3, y: 1, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tower Spire Antenna
+                    { type: 'cone', color: '#ff3333', opacity: 1, position: {x: 0, y: 22.5, z: 0}, scale: {x: 0.4, y: 5, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Flashing Beacon on Spire
+                    { type: 'sphere', color: '#ff0000', opacity: 1, position: {x: 0, y: 25.1, z: 0}, scale: {x: 0.3, y: 0.3, z: 0.3}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                bridge: [
+                    // Left Pier Anchor
+                    { type: 'box', color: '#444444', opacity: 1, position: {x: -12, y: 2.1, z: 0}, scale: {x: 3, y: 4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Right Pier Anchor
+                    { type: 'box', color: '#444444', opacity: 1, position: {x: 12, y: 2.1, z: 0}, scale: {x: 3, y: 4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Roadway Deck
+                    { type: 'box', color: '#222222', opacity: 1, position: {x: 0, y: 4.1, z: 0}, scale: {x: 32, y: 0.4, z: 4.5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Left Tower
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 8, z: -2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 8, z: 2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: -8, y: 11, z: 0}, scale: {x: 0.8, y: 0.4, z: 4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Right Tower
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 8, z: -2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 8, z: 2}, scale: {x: 0.8, y: 8, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#cc3333', opacity: 1, position: {x: 8, y: 11, z: 0}, scale: {x: 0.8, y: 0.4, z: 4}, rotation: {x: 0, y: 0, z: 0} },
+                    // Suspension Cable Swags (made of Prisms/Boxes)
+                    { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 7, z: -2}, scale: {x: 16, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 7, z: 2}, scale: {x: 16, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0} },
+                    // Side handrails (Safety barriers)
+                    { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 4.8, z: -2.2}, scale: {x: 32, y: 0.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#ffcc00', opacity: 1, position: {x: 0, y: 4.8, z: 2.2}, scale: {x: 32, y: 0.6, z: 0.1}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                castle: [
+                    // Main Keep Walls
+                    { type: 'box', color: '#8b8c8d', opacity: 1, position: {x: 0, y: 2, z: 0}, scale: {x: 12, y: 4, z: 12}, rotation: {x: 0, y: 0, z: 0} },
+                    // Battlements (Inner cuts)
+                    { type: 'box', color: '#68696a', opacity: 1, position: {x: 0, y: 4, z: 0}, scale: {x: 10, y: 1, z: 10}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front archway gate
+                    { type: 'box', color: '#444', opacity: 1, position: {x: 0, y: 1.2, z: 6}, scale: {x: 2.8, y: 2.4, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tower 1 (Front-Left)
+                    { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: -6, y: 3.5, z: 6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: -6, y: 8, z: 6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tower 2 (Front-Right)
+                    { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: 6, y: 3.5, z: 6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: 6, y: 8, z: 6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tower 3 (Back-Left)
+                    { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: -6, y: 3.5, z: -6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: -6, y: 8, z: -6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tower 4 (Back-Right)
+                    { type: 'cylinder', color: '#7b7c7d', opacity: 1, position: {x: 6, y: 3.5, z: -6}, scale: {x: 3, y: 7, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cone', color: '#8a1c1c', opacity: 1, position: {x: 6, y: 8, z: -6}, scale: {x: 3.2, y: 2.5, z: 3.2}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                tree: [
+                    // Tree Trunk base
+                    { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: 0, y: 2, z: 0}, scale: {x: 0.8, y: 4, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Secondary branches
+                    { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: 0.8, y: 3.5, z: 0.4}, scale: {x: 0.4, y: 2.5, z: 0.4}, rotation: {x: 0, y: 0, z: -0.6} },
+                    { type: 'cylinder', color: '#5a3d28', opacity: 1, position: {x: -0.8, y: 3.5, z: -0.4}, scale: {x: 0.4, y: 2.5, z: 0.4}, rotation: {x: 0, y: 0, z: 0.6} },
+                    // Leaf Clusters (Vibrant Green shades)
+                    { type: 'sphere', color: '#2e7d32', opacity: 1, position: {x: 0, y: 5.5, z: 0}, scale: {x: 4.5, y: 4, z: 4.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#4caf50', opacity: 1, position: {x: 1.5, y: 5, z: 1}, scale: {x: 3, y: 2.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#4caf50', opacity: 1, position: {x: -1.5, y: 5, z: -1}, scale: {x: 3, y: 2.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#81c784', opacity: 1, position: {x: 0, y: 7.2, z: 0}, scale: {x: 2.5, y: 2, z: 2.5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Apples or fruits in the canopy
+                    { type: 'sphere', color: '#e53935', opacity: 1, position: {x: 1, y: 4.5, z: 1.8}, scale: {x: 0.4, y: 0.4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#e53935', opacity: 1, position: {x: -1.5, y: 4.8, z: 1.2}, scale: {x: 0.4, y: 0.4, z: 0.4}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                car: [
+                    // Lower body/chassis
+                    { type: 'box', color: '#d32f2f', opacity: 1, position: {x: 0, y: 0.8, z: 0}, scale: {x: 6, y: 0.8, z: 2.8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Cabin compartment
+                    { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -0.4, y: 1.6, z: 0}, scale: {x: 3.2, y: 0.8, z: 2.6}, rotation: {x: 0, y: 0, z: 0} },
+                    // Windshield glass
+                    { type: 'box', color: '#80deea', opacity: 0.6, position: {x: 1.25, y: 1.6, z: 0}, scale: {x: 0.1, y: 0.7, z: 2.4}, rotation: {x: 0, y: 0.15, z: 0} },
+                    { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -2.05, y: 1.6, z: 0}, scale: {x: 0.1, y: 0.7, z: 2.4}, rotation: {x: 0, y: -0.15, z: 0} },
+                    // Side Window wraps
+                    { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -0.4, y: 1.6, z: 1.31}, scale: {x: 3.1, y: 0.7, z: 0.02}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#80deea', opacity: 0.6, position: {x: -0.4, y: 1.6, z: -1.31}, scale: {x: 3.1, y: 0.7, z: 0.02}, rotation: {x: 0, y: 0, z: 0} },
+                    // Front hood grille block
+                    { type: 'box', color: '#111111', opacity: 1, position: {x: 3.01, y: 0.8, z: 0}, scale: {x: 0.1, y: 0.5, z: 2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Wheel Front-Left
+                    { type: 'cylinder', color: '#212121', opacity: 1, position: {x: 1.8, y: 0.5, z: 1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
+                    // Wheel Front-Right
+                    { type: 'cylinder', color: '#212121', opacity: 1, position: {x: 1.8, y: 0.5, z: -1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
+                    // Wheel Rear-Left
+                    { type: 'cylinder', color: '#212121', opacity: 1, position: {x: -1.8, y: 0.5, z: 1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
+                    // Wheel Rear-Right
+                    { type: 'cylinder', color: '#212121', opacity: 1, position: {x: -1.8, y: 0.5, z: -1.4}, scale: {x: 1.1, y: 0.4, z: 1.1}, rotation: {x: 1.57, y: 0, z: 0}, roughness: 0.9, metalness: 0.1 },
+                    // Spoiler on trunk
+                    { type: 'box', color: '#111', opacity: 1, position: {x: -2.8, y: 1.5, z: 0}, scale: {x: 0.4, y: 0.1, z: 2.8}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -2.8, y: 1.1, z: 1.1}, scale: {x: 0.2, y: 0.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#d32f2f', opacity: 1, position: {x: -2.8, y: 1.1, z: -1.1}, scale: {x: 0.2, y: 0.6, z: 0.2}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                street: [
+                    // Main dark asphalt lane
+                    { type: 'box', color: '#222222', opacity: 1, position: {x: 0, y: 0.1, z: 0}, scale: {x: 24, y: 0.2, z: 8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Concrete curbs
+                    { type: 'box', color: '#777777', opacity: 1, position: {x: 0, y: 0.25, z: 4.1}, scale: {x: 24, y: 0.3, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#777777', opacity: 1, position: {x: 0, y: 0.25, z: -4.1}, scale: {x: 24, y: 0.3, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Sidewalk stone pavements
+                    { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.2, z: 5}, scale: {x: 24, y: 0.2, z: 1.6}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#555555', opacity: 1, position: {x: 0, y: 0.2, z: -5}, scale: {x: 24, y: 0.2, z: 1.6}, rotation: {x: 0, y: 0, z: 0} },
+                    // Center divider paint stripes
+                    { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: -8, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: 0, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#ffeb3b', opacity: 1, position: {x: 8, y: 0.21, z: 0}, scale: {x: 3, y: 0.02, z: 0.3}, rotation: {x: 0, y: 0, z: 0} },
+                    // Street pole Lamp
+                    { type: 'cylinder', color: '#7f8c8d', opacity: 1, position: {x: -6, y: 3.5, z: 4.5}, scale: {x: 0.2, y: 7, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#7f8c8d', opacity: 1, position: {x: -5, y: 7, z: 4.5}, scale: {x: 2.2, y: 0.2, z: 0.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'cone', color: '#fff9c4', opacity: 0.8, position: {x: -4, y: 6.5, z: 4.5}, scale: {x: 0.8, y: 0.8, z: 0.8}, rotation: {x: 3.14, y: 0, z: 0} }
+                ],
+                fountain: [
+                    // Outer retaining circular wall (stacked Cylinders/Torus)
+                    { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 0.3, z: 0}, scale: {x: 10, y: 0.6, z: 10}, rotation: {x: 0, y: 0, z: 0} },
+                    // Pool basin water
+                    { type: 'cylinder', color: '#29b6f6', opacity: 0.7, position: {x: 0, y: 0.5, z: 0}, scale: {x: 9.6, y: 0.2, z: 9.6}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tier 2 Column
+                    { type: 'cylinder', color: '#8d6e63', opacity: 1, position: {x: 0, y: 1.5, z: 0}, scale: {x: 2, y: 2.2, z: 2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tier 2 Basin bowl
+                    { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 2.7, z: 0}, scale: {x: 5, y: 0.4, z: 5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tier 2 overflowing Water sheet
+                    { type: 'cylinder', color: '#29b6f6', opacity: 0.5, position: {x: 0, y: 1.6, z: 0}, scale: {x: 5.2, y: 1.8, z: 5.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tier 3 Column
+                    { type: 'cylinder', color: '#8d6e63', opacity: 1, position: {x: 0, y: 3.5, z: 0}, scale: {x: 1, y: 1.4, z: 1}, rotation: {x: 0, y: 0, z: 0} },
+                    // Tier 3 Basin bowl
+                    { type: 'cylinder', color: '#795548', opacity: 1, position: {x: 0, y: 4.2, z: 0}, scale: {x: 2.5, y: 0.3, z: 2.5}, rotation: {x: 0, y: 0, z: 0} },
+                    // Top jet head
+                    { type: 'cone', color: '#e0f7fa', opacity: 0.8, position: {x: 0, y: 4.8, z: 0}, scale: {x: 0.8, y: 1, z: 0.8}, rotation: {x: 0, y: 0, z: 0} },
+                    // Water splashes (represented by floating spheres)
+                    { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: 1.2, y: 2.5, z: 1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: -1.2, y: 2.5, z: -1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: -1.2, y: 2.5, z: 1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'sphere', color: '#b3e5fc', opacity: 0.6, position: {x: 1.2, y: 2.5, z: -1.2}, scale: {x: 0.5, y: 0.5, z: 0.5}, rotation: {x: 0, y: 0, z: 0} }
+                ],
+                fence: [
+                    // Brick Column 1 (Left)
+                    { type: 'box', color: '#b0bec5', opacity: 1, position: {x: -6, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Column Cap
+                    { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: -6, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
+                    // Brick Column 2 (Center)
+                    { type: 'box', color: '#b0bec5', opacity: 1, position: {x: 0, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Column Cap
+                    { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: 0, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
+                    // Brick Column 3 (Right)
+                    { type: 'box', color: '#b0bec5', opacity: 1, position: {x: 6, y: 1.6, z: 0}, scale: {x: 1.2, y: 3.2, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    // Column Cap
+                    { type: 'pyramid', color: '#37474f', opacity: 1, position: {x: 6, y: 3.4, z: 0}, scale: {x: 1.5, y: 0.6, z: 1.5}, rotation: {x: 0, y: 0.785, z: 0} },
+                    
+                    // Left Spindle panel rails
+                    { type: 'box', color: '#263238', opacity: 1, position: {x: -3, y: 2.4, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'box', color: '#263238', opacity: 1, position: {x: -3, y: 0.8, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    // Spindles (vertical rods) Left
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -4.8, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -3.9, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -3, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -2.1, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: -1.2, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+
+                    // Right Spindle panel rails
+                    { type: 'box', color: '#263238', opacity: 1, position: {x: 3, y: 2.4, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'box', color: '#263238', opacity: 1, position: {x: 3, y: 0.8, z: 0}, scale: {x: 4.8, y: 0.15, z: 0.15}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    // Spindles (vertical rods) Right
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 1.2, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 2.1, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 3, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 3.9, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 },
+                    { type: 'cylinder', color: '#263238', opacity: 1, position: {x: 4.8, y: 1.6, z: 0}, scale: {x: 0.1, y: 1.8, z: 0.1}, rotation: {x: 0, y: 0, z: 0}, metalness: 0.8 }
+                ],
+                stairs: [
+                    // Grand Landing Pad
+                    { type: 'box', color: '#a1a8b0', opacity: 1, position: {x: 0, y: 3.25, z: -4}, scale: {x: 4, y: 0.5, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    // Steps (Iterating upward and backward)
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 0.25, z: 2}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 0.75, z: 1}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 1.25, z: 0}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 1.75, z: -1}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 2.25, z: -2}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#78909c', opacity: 1, position: {x: 0, y: 2.75, z: -3}, scale: {x: 4, y: 0.5, z: 1.2}, rotation: {x: 0, y: 0, z: 0} },
+                    
+                    // Left side concrete balustrade beam
+                    { type: 'box', color: '#455a64', opacity: 1, position: {x: -2.1, y: 1.8, z: -0.5}, scale: {x: 0.2, y: 3.5, z: 6}, rotation: {x: 0.46, y: 0, z: 0} },
+                    // Right side concrete balustrade beam
+                    { type: 'box', color: '#455a64', opacity: 1, position: {x: 2.1, y: 1.8, z: -0.5}, scale: {x: 0.2, y: 3.5, z: 6}, rotation: {x: 0.46, y: 0, z: 0} },
+                    // Safety side rails on top landing
+                    { type: 'box', color: '#455a64', opacity: 1, position: {x: -2.1, y: 4.2, z: -4}, scale: {x: 0.2, y: 1.4, z: 3}, rotation: {x: 0, y: 0, z: 0} },
+                    { type: 'box', color: '#455a64', opacity: 1, position: {x: 2.1, y: 4.2, z: -4}, scale: {x: 0.2, y: 1.4, z: 3}, rotation: {x: 0, y: 0, z: 0} }
+                ]
+            };
+            return presets[name] || [];
+        }
+
+        // ==================== IMPORT / EXPORT ====================
+        function getLineNumber(text, position) { return text.substring(0, position).split('\n').length; }
+
+        function importJSON() {
+            const raw = document.getElementById('import-box').value.trim();
+            const errorBox = document.getElementById('error-display');
+            errorBox.classList.remove('visible');
+            
+            if (!raw) { errorBox.textContent = 'Error: Input is empty.'; errorBox.classList.add('visible'); return; }
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                errorBox.textContent = `Error: ${e.message}`; errorBox.classList.add('visible'); return;
+            }
+            if (!Array.isArray(data)) { errorBox.textContent = 'Error: JSON must be an array of objects.'; errorBox.classList.add('visible'); return; }
+
+            clearScene(true);
+            importData(data, false);
+        }
+
+        function importData(data, skipSave = false) {
+            data.forEach(item => {
+                if (!item.type) return;
+                
+                const geometry = getGeometryForType(item.type);
+                const material = new THREE.MeshStandardMaterial({
+                    color: item.color || '#0277bd',
+                    roughness: item.roughness !== undefined ? item.roughness : 0.4,
+                    metalness: item.metalness !== undefined ? item.metalness : 0.1,
+                    transparent: true,
+                    opacity: item.opacity !== undefined ? item.opacity : 1,
+                    wireframe: item.wireframe || false
+                });
+                if(item.type === 'ring') material.side = THREE.DoubleSide;
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(parseFloat(item.position?.x) || 0, parseFloat(item.position?.y) || 0.5, parseFloat(item.position?.z) || 0);
+                mesh.scale.set(parseFloat(item.scale?.x) || 1, parseFloat(item.scale?.y) || 1, parseFloat(item.scale?.z) || 1);
+                mesh.rotation.set(parseFloat(item.rotation?.x) || 0, parseFloat(item.rotation?.y) || 0, parseFloat(item.rotation?.z) || 0);
+                mesh.castShadow = true; mesh.receiveShadow = true;
+                mesh.userData = { shapeType: item.type };
+
+                scene.add(mesh);
+                objects.push(mesh);
+            });
+            if(!skipSave) saveState();
+        }
+
+        function generateJSON() {
+            const outputData = getSceneStateJSON();
+            document.getElementById('code-box').value = JSON.stringify(outputData, null, 2);
+        }
+
+        function copyCode() {
+            const codeBox = document.getElementById('code-box');
+            codeBox.select();
+            document.execCommand('copy');
+            const btn = document.getElementById('copy-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "Copied!";
+            setTimeout(() => btn.innerText = originalText, 1500);
+        }
+
+        // ==================== RENDER LOOP ====================
         function onWindowResize() {
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
 
-        function finalizeBoxSelection() {
-            const sb = selectionBox.getBoundingClientRect();
-            const newlySelected = [];
-            objects.forEach(obj => {
-                const pos = obj.position.clone().project(camera);
-                const screenX = (pos.x * 0.5 + 0.5) * container.clientWidth + container.getBoundingClientRect().left;
-                const screenY = (-pos.y * 0.5 + 0.5) * container.clientHeight + container.getBoundingClientRect().top;
-                if (screenX >= sb.left && screenX <= sb.right && screenY >= sb.top && screenY <= sb.bottom) {
-                    newlySelected.push(obj);
-                }
-            });
-            if (newlySelected.length) {
-                if (!isCtrlDown) deselectAll();
-                newlySelected.forEach(addToSelection);
-            }
-        }
-
-        function handleCameraKeys() {
-            const speed = 0.25;
-            const forward = new THREE.Vector3();
+        function handleWASD() {
+            const moveSpeed = 0.3;
+            const direction = new THREE.Vector3();
             const right = new THREE.Vector3();
-            camera.getWorldDirection(forward);
-            forward.y = 0;
-            forward.normalize();
-            right.crossVectors(camera.up, forward).normalize();
 
-            const move = new THREE.Vector3();
+            camera.getWorldDirection(direction);
+            direction.y = 0;
+            direction.normalize();
+            right.crossVectors(camera.up, direction).normalize();
 
-            if (keys.w || keys.arrowup) move.add(forward);
-            if (keys.s || keys.arrowdown) move.sub(forward);
-            if (keys.a || keys.arrowleft) move.add(right);
-            if (keys.d || keys.arrowright) move.sub(right);
+            let moved = false;
+            let moveVec = new THREE.Vector3(0,0,0);
 
-            if (move.lengthSq() > 0) {
-                move.normalize().multiplyScalar(speed);
-                camera.position.add(move);
-                orbitControls.target.add(move);
+            if (keys.w) { moveVec.add(direction); moved = true; }
+            if (keys.s) { moveVec.sub(direction); moved = true; }
+            if (keys.a) { moveVec.add(right); moved = true; }
+            if (keys.d) { moveVec.sub(right); moved = true; }
+
+            if (moved) {
+                moveVec.normalize().multiplyScalar(moveSpeed);
+                camera.position.add(moveVec);
+                orbitControls.target.add(moveVec);
             }
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            handleCameraKeys();
+            handleWASD();
             orbitControls.update();
+            updateVisualGizmo();
             updateSelectionOutline();
             renderer.render(scene, camera);
         }
 
+        // ==================== BOOT ====================
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
